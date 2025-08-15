@@ -1,0 +1,422 @@
+import React from 'react';
+import PageHeader from '../components/PageHeader';
+import {
+  Box,
+  Container,
+  Heading,
+  Grid,
+  GridItem,
+  HStack,
+  VStack,
+  Text,
+  Card,
+  CardBody,
+  CardHeader,
+  Stat,
+  StatLabel,
+  StatNumber,
+  StatHelpText,
+  StatArrow,
+  Badge,
+  Icon,
+  Flex,
+  Spacer,
+  Progress,
+  useColorModeValue,
+  Divider,
+  Button,
+  SimpleGrid,
+} from '@chakra-ui/react';
+import { Doughnut, Line } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler,
+} from 'chart.js';
+import { FaCoffee, FaThermometerHalf, FaBox, FaGlobeAmericas, FaDollarSign, FaChartLine } from 'react-icons/fa';
+import { BsArrowRepeat, BsCloudRain, BsFuelPump, BsBank, BsGlobe2 } from 'react-icons/bs';
+import { MdTrendingUp } from 'react-icons/md';
+import { BarChart } from 'react-feather';
+
+// Register ChartJS components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+);
+
+const Dashboard: React.FC = () => {
+  const bgCard = useColorModeValue('white', 'gray.800');
+  const borderColor = useColorModeValue('gray.200', 'gray.600');
+
+  // KPI data
+  const kpis = [
+    { icon: FaCoffee, label: 'Preço da Saca', value: 'R$ 1.842', change: '+3.2%', type: 'increase' },
+    { icon: FaThermometerHalf, label: 'Índice Climático', value: '78/100', change: 'Favorável', type: 'neutral' },
+    { icon: FaBox, label: 'Estoque Mundial', value: '158M', change: '-2.1%', type: 'decrease' },
+    { icon: FaGlobeAmericas, label: 'Produção Global', value: '175M', change: '+4.5%', type: 'increase' },
+    { icon: FaDollarSign, label: 'Taxa de Câmbio', value: 'R$ 5.12', change: '+0.8%', type: 'increase' },
+    { icon: FaChartLine, label: 'Volatilidade', value: '24.3%', change: '+8.2%', type: 'increase' },
+  ];
+
+  // Market predictions data
+  const marketPredictions = [
+    {
+      period: 'Próxima Semana',
+      high: 65,
+      low: 35,
+      range: 'R$ 1.795 - R$ 1.920',
+      confidence: 'Alta',
+    },
+    {
+      period: 'Próximo Mês',
+      high: 58,
+      low: 42,
+      range: 'R$ 1.750 - R$ 1.980',
+      confidence: 'Média',
+    },
+    {
+      period: 'Próximo Semestre',
+      high: 72,
+      low: 28,
+      range: 'R$ 1.680 - R$ 2.150',
+      confidence: 'Alta',
+    },
+  ];
+
+  // Impact factors
+  const impactFactors = [
+    { icon: BsCloudRain, label: 'Clima', impact: 35, color: 'blue.500' },
+    { icon: FaDollarSign, label: 'Câmbio', impact: 25, color: 'green.500' },
+    { icon: MdTrendingUp, label: 'Demanda', impact: 20, color: 'purple.500' },
+    { icon: BsFuelPump, label: 'Combustível', impact: 10, color: 'orange.500' },
+    { icon: BsBank, label: 'Política', impact: 5, color: 'red.500' },
+    { icon: BsGlobe2, label: 'Global', impact: 5, color: 'cyan.500' },
+  ];
+
+  // Price composition chart data
+  const priceCompositionData = {
+    labels: ['Produção', 'Logística', 'Beneficiamento', 'Impostos', 'Margem'],
+    datasets: [
+      {
+        data: [45, 20, 15, 12, 8],
+        backgroundColor: [
+          '#8B4513',
+          '#A0522D',
+          '#CD853F',
+          '#DEB887',
+          '#F4A460',
+        ],
+        borderColor: '#fff',
+        borderWidth: 2,
+      },
+    ],
+  };
+
+  // Historical price trend data
+  const priceTrendData = {
+    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+    datasets: [
+      {
+        label: 'Preço Médio (R$/saca)',
+        data: [1650, 1680, 1720, 1750, 1780, 1810, 1790, 1820, 1835, 1842, null, null],
+        borderColor: '#8B4513',
+        backgroundColor: 'rgba(139, 69, 19, 0.1)',
+        tension: 0.4,
+        fill: true,
+      },
+      {
+        label: 'Projeção',
+        data: [null, null, null, null, null, null, null, null, null, 1842, 1880, 1920],
+        borderColor: '#800020',
+        backgroundColor: 'rgba(128, 0, 32, 0.1)',
+        borderDash: [5, 5],
+        tension: 0.4,
+        fill: true,
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top' as const,
+      },
+    },
+  };
+
+  const doughnutOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'right' as const,
+      },
+    },
+  };
+
+  // Market news
+  const marketNews = [
+    {
+      title: 'Geada no Sul de Minas afeta 15% da produção',
+      description: 'Produtores relatam perdas significativas após geada intensa',
+      priority: 'Alta',
+      time: '2h atrás',
+      impact: 'negative',
+    },
+    {
+      title: 'Exportações brasileiras batem recorde em outubro',
+      description: 'Volume exportado supera expectativas do mercado',
+      priority: 'Alta',
+      time: '5h atrás',
+      impact: 'positive',
+    },
+    {
+      title: 'Demanda mundial por café premium cresce 8%',
+      description: 'Cafés especiais ganham espaço no mercado internacional',
+      priority: 'Média',
+      time: '8h atrás',
+      impact: 'positive',
+    },
+    {
+      title: 'Bolsa de NY fecha em alta pelo terceiro dia',
+      description: 'Contratos futuros apresentam valorização consistente',
+      priority: 'Média',
+      time: '1d atrás',
+      impact: 'positive',
+    },
+    {
+      title: 'Colheita na Colômbia avança dentro do esperado',
+      description: 'Produção colombiana mantém ritmo normal',
+      priority: 'Baixa',
+      time: '2d atrás',
+      impact: 'neutral',
+    },
+  ];
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'Alta':
+        return 'red';
+      case 'Média':
+        return 'orange';
+      case 'Baixa':
+        return 'green';
+      default:
+        return 'gray';
+    }
+  };
+
+  const getImpactIcon = (impact: string) => {
+    switch (impact) {
+      case 'positive':
+        return '📈';
+      case 'negative':
+        return '📉';
+      default:
+        return '➡️';
+    }
+  };
+
+  return (
+    <Box>
+      <PageHeader 
+        title="Dashboard de Café" 
+        subtitle="Visão geral da produção e mercado"
+        icon={BarChart}
+      />
+      <Container maxW="container.2xl" py={8}>
+        <VStack spacing={8} align="stretch">
+        <Grid templateColumns={{ base: '1fr', lg: '3fr 1fr' }} gap={8}>
+          {/* Main Content Area */}
+          <GridItem>
+            {/* KPI Grid */}
+            <SimpleGrid columns={{ base: 2, md: 3, lg: 6 }} spacing={4} mb={8}>
+              {kpis.map((kpi, index) => (
+                <Card key={index} bg={bgCard} borderWidth={1} borderColor={borderColor}>
+                  <CardBody p={4}>
+                    <Stat textAlign="center">
+                      <Icon as={kpi.icon} boxSize={6} color="coffee.500" mb={2} />
+                      <StatLabel fontSize="xs" color="gray.600">{kpi.label}</StatLabel>
+                      <StatNumber fontSize="lg">{kpi.value}</StatNumber>
+                      <StatHelpText fontSize="xs">
+                        {kpi.type !== 'neutral' && (
+                          <StatArrow type={kpi.type as 'increase' | 'decrease'} />
+                        )}
+                        {kpi.change}
+                      </StatHelpText>
+                    </Stat>
+                  </CardBody>
+                </Card>
+              ))}
+            </SimpleGrid>
+
+            {/* Market Predictions */}
+            <Card bg={bgCard} borderWidth={1} borderColor={borderColor} mb={8}>
+              <CardHeader>
+                <Flex align="center">
+                  <Heading size="md">📊 Previsões de Mercado</Heading>
+                  <Spacer />
+                  <Badge colorScheme="green" fontSize="xs">Atualizado</Badge>
+                </Flex>
+              </CardHeader>
+              <CardBody>
+                <Grid templateColumns={{ base: '1fr', md: 'repeat(3, 1fr)' }} gap={6}>
+                  {marketPredictions.map((prediction, index) => (
+                    <Card key={index} bg="gray.50" borderWidth={1} borderColor={borderColor}>
+                      <CardBody>
+                        <Text fontWeight="bold" mb={4}>{prediction.period}</Text>
+                        
+                        <VStack spacing={3} align="stretch">
+                          <Box>
+                            <Flex justify="space-between" mb={1}>
+                              <Text fontSize="sm">Alta</Text>
+                              <Text fontSize="sm" fontWeight="bold">{prediction.high}%</Text>
+                            </Flex>
+                            <Progress value={prediction.high} colorScheme="green" size="lg" borderRadius="md" />
+                          </Box>
+                          
+                          <Box>
+                            <Flex justify="space-between" mb={1}>
+                              <Text fontSize="sm">Baixa</Text>
+                              <Text fontSize="sm" fontWeight="bold">{prediction.low}%</Text>
+                            </Flex>
+                            <Progress value={prediction.low} colorScheme="red" size="lg" borderRadius="md" />
+                          </Box>
+                        </VStack>
+                        
+                        <Divider my={3} />
+                        
+                        <VStack spacing={1} align="stretch">
+                          <Text fontSize="xs" color="gray.600">Faixa Prevista:</Text>
+                          <Text fontSize="sm" fontWeight="bold">{prediction.range}</Text>
+                          <Badge colorScheme={prediction.confidence === 'Alta' ? 'green' : 'yellow'} size="sm">
+                            Confiança: {prediction.confidence}
+                          </Badge>
+                        </VStack>
+                      </CardBody>
+                    </Card>
+                  ))}
+                </Grid>
+              </CardBody>
+            </Card>
+
+            {/* Charts Section */}
+            <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={6} mb={8}>
+              {/* Price Composition Chart */}
+              <Card bg={bgCard} borderWidth={1} borderColor={borderColor}>
+                <CardHeader>
+                  <Heading size="md">📈 Composição do Preço</Heading>
+                </CardHeader>
+                <CardBody>
+                  <Box h="300px">
+                    <Doughnut data={priceCompositionData} options={doughnutOptions} />
+                  </Box>
+                </CardBody>
+              </Card>
+
+              {/* Price Trend Chart */}
+              <Card bg={bgCard} borderWidth={1} borderColor={borderColor}>
+                <CardHeader>
+                  <Heading size="md">📊 Tendência de Preços</Heading>
+                </CardHeader>
+                <CardBody>
+                  <Box h="300px">
+                    <Line data={priceTrendData} options={chartOptions} />
+                  </Box>
+                </CardBody>
+              </Card>
+            </Grid>
+
+            {/* Impact Factors */}
+            <Card bg={bgCard} borderWidth={1} borderColor={borderColor}>
+              <CardHeader>
+                <Heading size="md">⚡ Fatores de Impacto no Preço</Heading>
+              </CardHeader>
+              <CardBody>
+                <SimpleGrid columns={{ base: 2, md: 3, lg: 6 }} spacing={4}>
+                  {impactFactors.map((factor, index) => (
+                    <Card key={index} bg="gray.50" borderWidth={1} borderColor={borderColor}>
+                      <CardBody textAlign="center" p={4}>
+                        <Icon as={factor.icon} boxSize={8} color={factor.color} mb={2} />
+                        <Text fontSize="sm" fontWeight="bold" mb={1}>{factor.label}</Text>
+                        <Text fontSize="2xl" fontWeight="bold" color={factor.color}>
+                          {factor.impact}%
+                        </Text>
+                      </CardBody>
+                    </Card>
+                  ))}
+                </SimpleGrid>
+              </CardBody>
+            </Card>
+          </GridItem>
+
+          {/* Sidebar */}
+          <GridItem>
+            <Card bg={bgCard} borderWidth={1} borderColor={borderColor} position="sticky" top={4}>
+              <CardHeader>
+                <Flex align="center">
+                  <Heading size="md">📰 Notícias do Mercado</Heading>
+                  <Spacer />
+                  <Button size="sm" variant="ghost" leftIcon={<Icon as={BsArrowRepeat} />}>
+                    Atualizar
+                  </Button>
+                </Flex>
+              </CardHeader>
+              <CardBody>
+                <VStack spacing={4} align="stretch">
+                  {marketNews.map((news, index) => (
+                    <Box key={index}>
+                      <Card bg="gray.50" borderWidth={1} borderColor={borderColor}>
+                        <CardBody>
+                          <HStack spacing={2} mb={2}>
+                            <Text fontSize="lg">{getImpactIcon(news.impact)}</Text>
+                            <Text fontWeight="bold" fontSize="sm" flex={1}>
+                              {news.title}
+                            </Text>
+                          </HStack>
+                          <Text fontSize="xs" color="gray.600" mb={3}>
+                            {news.description}
+                          </Text>
+                          <Flex justify="space-between" align="center">
+                            <Badge colorScheme={getPriorityColor(news.priority)} fontSize="xs">
+                              {news.priority}
+                            </Badge>
+                            <Text fontSize="xs" color="gray.500">
+                              {news.time}
+                            </Text>
+                          </Flex>
+                        </CardBody>
+                      </Card>
+                      {index < marketNews.length - 1 && <Divider />}
+                    </Box>
+                  ))}
+                </VStack>
+              </CardBody>
+            </Card>
+          </GridItem>
+        </Grid>
+        </VStack>
+      </Container>
+    </Box>
+  );
+};
+
+export default Dashboard;
