@@ -22,11 +22,11 @@ import {
   Flex,
   Spacer,
   Progress,
-  useColorModeValue,
   Divider,
   Button,
   SimpleGrid,
 } from '@chakra-ui/react';
+import { useThemeContext } from '../contexts/ThemeContext';
 import { Doughnut, Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -59,8 +59,7 @@ ChartJS.register(
 );
 
 const Dashboard: React.FC = () => {
-  const bgCard = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('gray.200', 'gray.600');
+  const { currentTheme } = useThemeContext();
 
   // KPI data
   const kpis = [
@@ -211,18 +210,6 @@ const Dashboard: React.FC = () => {
     },
   ];
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'Alta':
-        return 'red';
-      case 'Média':
-        return 'orange';
-      case 'Baixa':
-        return 'green';
-      default:
-        return 'gray';
-    }
-  };
 
   const getImpactIcon = (impact: string) => {
     switch (impact) {
@@ -250,12 +237,12 @@ const Dashboard: React.FC = () => {
             {/* KPI Grid */}
             <SimpleGrid columns={{ base: 2, md: 3, lg: 6 }} spacing={4} mb={8}>
               {kpis.map((kpi, index) => (
-                <Card key={index} bg={bgCard} borderWidth={1} borderColor={borderColor}>
+                <Card key={index} bg={currentTheme.colors.background.primary} borderWidth={1} borderColor={currentTheme.colors.border.primary}>
                   <CardBody p={4}>
                     <Stat textAlign="center">
-                      <Icon as={kpi.icon} boxSize={6} color="coffee.500" mb={2} />
-                      <StatLabel fontSize="xs" color="gray.600">{kpi.label}</StatLabel>
-                      <StatNumber fontSize="lg">{kpi.value}</StatNumber>
+                      <Icon as={kpi.icon} boxSize={6} color={currentTheme.colors.primary} mb={2} />
+                      <StatLabel fontSize="xs" color={currentTheme.colors.text.secondary}>{kpi.label}</StatLabel>
+                      <StatNumber fontSize="lg" color={currentTheme.colors.text.primary}>{kpi.value}</StatNumber>
                       <StatHelpText fontSize="xs">
                         {kpi.type !== 'neutral' && (
                           <StatArrow type={kpi.type as 'increase' | 'decrease'} />
@@ -269,45 +256,67 @@ const Dashboard: React.FC = () => {
             </SimpleGrid>
 
             {/* Market Predictions */}
-            <Card bg={bgCard} borderWidth={1} borderColor={borderColor} mb={8}>
+            <Card bg={currentTheme.colors.background.primary} borderWidth={1} borderColor={currentTheme.colors.border.primary} mb={8}>
               <CardHeader>
                 <Flex align="center">
-                  <Heading size="md">📊 Previsões de Mercado</Heading>
+                  <Heading size="md" color={currentTheme.colors.text.primary}>📊 Previsões de Mercado</Heading>
                   <Spacer />
-                  <Badge colorScheme="green" fontSize="xs">Atualizado</Badge>
+                  <Badge bg={currentTheme.colors.status.success} color="white" fontSize="xs">Atualizado</Badge>
                 </Flex>
               </CardHeader>
               <CardBody>
                 <Grid templateColumns={{ base: '1fr', md: 'repeat(3, 1fr)' }} gap={6}>
                   {marketPredictions.map((prediction, index) => (
-                    <Card key={index} bg="gray.50" borderWidth={1} borderColor={borderColor}>
+                    <Card key={index} bg={currentTheme.colors.background.secondary} borderWidth={1} borderColor={currentTheme.colors.border.primary}>
                       <CardBody>
-                        <Text fontWeight="bold" mb={4}>{prediction.period}</Text>
+                        <Text fontWeight="bold" mb={4} color={currentTheme.colors.text.primary}>{prediction.period}</Text>
                         
                         <VStack spacing={3} align="stretch">
                           <Box>
                             <Flex justify="space-between" mb={1}>
-                              <Text fontSize="sm">Alta</Text>
-                              <Text fontSize="sm" fontWeight="bold">{prediction.high}%</Text>
+                              <Text fontSize="sm" color={currentTheme.colors.text.secondary}>Alta</Text>
+                              <Text fontSize="sm" fontWeight="bold" color={currentTheme.colors.text.primary}>{prediction.high}%</Text>
                             </Flex>
-                            <Progress value={prediction.high} colorScheme="green" size="lg" borderRadius="md" />
+                            <Progress
+                              value={prediction.high}
+                              size="lg"
+                              borderRadius="md"
+                              sx={{
+                                '& > div': {
+                                  bg: currentTheme.colors.status.success
+                                }
+                              }}
+                            />
                           </Box>
                           
                           <Box>
                             <Flex justify="space-between" mb={1}>
-                              <Text fontSize="sm">Baixa</Text>
-                              <Text fontSize="sm" fontWeight="bold">{prediction.low}%</Text>
+                              <Text fontSize="sm" color={currentTheme.colors.text.secondary}>Baixa</Text>
+                              <Text fontSize="sm" fontWeight="bold" color={currentTheme.colors.text.primary}>{prediction.low}%</Text>
                             </Flex>
-                            <Progress value={prediction.low} colorScheme="red" size="lg" borderRadius="md" />
+                            <Progress
+                              value={prediction.low}
+                              size="lg"
+                              borderRadius="md"
+                              sx={{
+                                '& > div': {
+                                  bg: currentTheme.colors.status.error
+                                }
+                              }}
+                            />
                           </Box>
                         </VStack>
                         
                         <Divider my={3} />
                         
                         <VStack spacing={1} align="stretch">
-                          <Text fontSize="xs" color="gray.600">Faixa Prevista:</Text>
-                          <Text fontSize="sm" fontWeight="bold">{prediction.range}</Text>
-                          <Badge colorScheme={prediction.confidence === 'Alta' ? 'green' : 'yellow'} size="sm">
+                          <Text fontSize="xs" color={currentTheme.colors.text.secondary}>Faixa Prevista:</Text>
+                          <Text fontSize="sm" fontWeight="bold" color={currentTheme.colors.text.primary}>{prediction.range}</Text>
+                          <Badge
+                            bg={prediction.confidence === 'Alta' ? currentTheme.colors.status.success : currentTheme.colors.status.warning}
+                            color="white"
+                            size="sm"
+                          >
                             Confiança: {prediction.confidence}
                           </Badge>
                         </VStack>
@@ -321,9 +330,9 @@ const Dashboard: React.FC = () => {
             {/* Charts Section */}
             <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={6} mb={8}>
               {/* Price Composition Chart */}
-              <Card bg={bgCard} borderWidth={1} borderColor={borderColor}>
+              <Card bg={currentTheme.colors.background.primary} borderWidth={1} borderColor={currentTheme.colors.border.primary}>
                 <CardHeader>
-                  <Heading size="md">📈 Composição do Preço</Heading>
+                  <Heading size="md" color={currentTheme.colors.text.primary}>📈 Composição do Preço</Heading>
                 </CardHeader>
                 <CardBody>
                   <Box h="300px">
@@ -333,9 +342,9 @@ const Dashboard: React.FC = () => {
               </Card>
 
               {/* Price Trend Chart */}
-              <Card bg={bgCard} borderWidth={1} borderColor={borderColor}>
+              <Card bg={currentTheme.colors.background.primary} borderWidth={1} borderColor={currentTheme.colors.border.primary}>
                 <CardHeader>
-                  <Heading size="md">📊 Tendência de Preços</Heading>
+                  <Heading size="md" color={currentTheme.colors.text.primary}>📊 Tendência de Preços</Heading>
                 </CardHeader>
                 <CardBody>
                   <Box h="300px">
@@ -346,18 +355,18 @@ const Dashboard: React.FC = () => {
             </Grid>
 
             {/* Impact Factors */}
-            <Card bg={bgCard} borderWidth={1} borderColor={borderColor}>
+            <Card bg={currentTheme.colors.background.primary} borderWidth={1} borderColor={currentTheme.colors.border.primary}>
               <CardHeader>
-                <Heading size="md">⚡ Fatores de Impacto no Preço</Heading>
+                <Heading size="md" color={currentTheme.colors.text.primary}>⚡ Fatores de Impacto no Preço</Heading>
               </CardHeader>
               <CardBody>
                 <SimpleGrid columns={{ base: 2, md: 3, lg: 6 }} spacing={4}>
                   {impactFactors.map((factor, index) => (
-                    <Card key={index} bg="gray.50" borderWidth={1} borderColor={borderColor}>
+                    <Card key={index} bg={currentTheme.colors.background.secondary} borderWidth={1} borderColor={currentTheme.colors.border.primary}>
                       <CardBody textAlign="center" p={4}>
-                        <Icon as={factor.icon} boxSize={8} color={factor.color} mb={2} />
-                        <Text fontSize="sm" fontWeight="bold" mb={1}>{factor.label}</Text>
-                        <Text fontSize="2xl" fontWeight="bold" color={factor.color}>
+                        <Icon as={factor.icon} boxSize={8} color={currentTheme.colors.primary} mb={2} />
+                        <Text fontSize="sm" fontWeight="bold" mb={1} color={currentTheme.colors.text.primary}>{factor.label}</Text>
+                        <Text fontSize="2xl" fontWeight="bold" color={currentTheme.colors.primary}>
                           {factor.impact}%
                         </Text>
                       </CardBody>
@@ -370,12 +379,18 @@ const Dashboard: React.FC = () => {
 
           {/* Sidebar */}
           <GridItem>
-            <Card bg={bgCard} borderWidth={1} borderColor={borderColor} position="sticky" top={4}>
+            <Card bg={currentTheme.colors.background.primary} borderWidth={1} borderColor={currentTheme.colors.border.primary} position="sticky" top={4}>
               <CardHeader>
                 <Flex align="center">
-                  <Heading size="md">📰 Notícias do Mercado</Heading>
+                  <Heading size="md" color={currentTheme.colors.text.primary}>📰 Notícias do Mercado</Heading>
                   <Spacer />
-                  <Button size="sm" variant="ghost" leftIcon={<Icon as={BsArrowRepeat} />}>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    leftIcon={<Icon as={BsArrowRepeat} />}
+                    color={currentTheme.colors.text.secondary}
+                    _hover={{ bg: currentTheme.colors.background.secondary }}
+                  >
                     Atualizar
                   </Button>
                 </Flex>
@@ -384,22 +399,30 @@ const Dashboard: React.FC = () => {
                 <VStack spacing={4} align="stretch">
                   {marketNews.map((news, index) => (
                     <Box key={index}>
-                      <Card bg="gray.50" borderWidth={1} borderColor={borderColor}>
+                      <Card bg={currentTheme.colors.background.secondary} borderWidth={1} borderColor={currentTheme.colors.border.primary}>
                         <CardBody>
                           <HStack spacing={2} mb={2}>
                             <Text fontSize="lg">{getImpactIcon(news.impact)}</Text>
-                            <Text fontWeight="bold" fontSize="sm" flex={1}>
+                            <Text fontWeight="bold" fontSize="sm" flex={1} color={currentTheme.colors.text.primary}>
                               {news.title}
                             </Text>
                           </HStack>
-                          <Text fontSize="xs" color="gray.600" mb={3}>
+                          <Text fontSize="xs" color={currentTheme.colors.text.secondary} mb={3}>
                             {news.description}
                           </Text>
                           <Flex justify="space-between" align="center">
-                            <Badge colorScheme={getPriorityColor(news.priority)} fontSize="xs">
+                            <Badge
+                              bg={
+                                news.priority === 'Alta' ? currentTheme.colors.status.error :
+                                news.priority === 'Média' ? currentTheme.colors.status.warning :
+                                currentTheme.colors.status.success
+                              }
+                              color="white"
+                              fontSize="xs"
+                            >
                               {news.priority}
                             </Badge>
-                            <Text fontSize="xs" color="gray.500">
+                            <Text fontSize="xs" color={currentTheme.colors.text.secondary}>
                               {news.time}
                             </Text>
                           </Flex>

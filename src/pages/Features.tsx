@@ -1,359 +1,1142 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Container,
-  Heading,
   Grid,
   GridItem,
-  VStack,
-  Text,
   Card,
   CardBody,
   CardHeader,
+  Badge,
+  Icon,
+  Text,
+  Heading,
+  VStack,
+  Flex,
+  Divider,
+  Progress,
+  Button,
+  SimpleGrid,
+  Select,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
   Stat,
   StatLabel,
   StatNumber,
   StatHelpText,
   StatArrow,
-  Badge,
-  Icon,
-  Flex,
-  Spacer,
-  Progress,
-  useColorModeValue,
-  Divider,
-  Button,
-  SimpleGrid,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+  Slider,
+  SliderTrack,
+  SliderFilledTrack,
+  SliderThumb,
+  FormControl,
+  FormLabel,
+  HStack,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  TableContainer,
+  List,
+  ListItem,
+  ListIcon,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
 } from '@chakra-ui/react';
-import { Doughnut } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-import { FaCoffee, FaThermometerHalf, FaBox, FaGlobeAmericas, FaDollarSign, FaChartLine } from 'react-icons/fa';
-import { BsArrowRepeat, BsCloudRain, BsBank, BsGlobe2, BsTruck } from 'react-icons/bs';
-import { MdTrendingUp, MdFactory } from 'react-icons/md';
-import { Coffee } from 'react-feather';
 import PageHeader from '../components/PageHeader';
-
-// Register ChartJS components
-ChartJS.register(
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend
-);
+import { Coffee } from 'react-feather';
+import { FaCoffee, FaCalculator, FaChartLine, FaDollarSign, FaGlobeAmericas, FaCheckCircle, FaChild, FaDatabase } from 'react-icons/fa';
+import { FaArrowTrendUp } from 'react-icons/fa6';
+import { MdTrendingUp, MdTrendingDown, MdTrendingFlat } from 'react-icons/md';
+import { useThemeContext } from '../contexts/ThemeContext';
 
 const Features: React.FC = () => {
-  const bgCard = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('gray.200', 'gray.600');
+  const { currentTheme } = useThemeContext();
+  const bgCard = currentTheme.colors.background.primary;
+  const borderColor = currentTheme.colors.border.primary;
+  const subCardBg = currentTheme.colors.background.secondary;
 
-  // KPI data baseado no protótipo
-  const kpis = [
-    { icon: FaCoffee, label: 'Preço Atual (60kg)', value: 'R$ 1.842', change: '+3.2%', type: 'increase' },
-    { icon: FaThermometerHalf, label: 'Índice Climático', value: '78/100', change: 'Favorável', type: 'neutral' },
-    { icon: FaBox, label: 'Estoque Global', value: '158M sacas', change: '-2.1%', type: 'decrease' },
-    { icon: FaGlobeAmericas, label: 'Demanda Mundial', value: '175M sacas', change: '+4.5%', type: 'increase' },
-    { icon: FaDollarSign, label: 'Taxa de Câmbio', value: 'R$ 5.12', change: '+0.8%', type: 'increase' },
-    { icon: FaChartLine, label: 'Volatilidade', value: '24.3%', change: '+8.2%', type: 'increase' },
-  ];
+  // Modal state
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
-  // Market predictions data
-  const marketPredictions = [
-    {
-      period: 'Próxima Semana',
-      high: 65,
-      low: 35,
-      range: 'R$ 1.795 - R$ 1.920',
-      confidence: 'Alta',
-    },
-    {
-      period: 'Próximo Mês',
-      high: 58,
-      low: 42,
-      range: 'R$ 1.750 - R$ 1.980',
-      confidence: 'Média',
-    },
-    {
-      period: 'Próximo Semestre',
-      high: 72,
-      low: 28,
-      range: 'R$ 1.680 - R$ 2.150',
-      confidence: 'Alta',
-    },
-  ];
+  // Estados para calculadora
+  const [quantidade, setQuantidade] = useState(100);
+  const [qualidade, setQualidade] = useState<'tipo2' | 'tipo4' | 'tipo6' | 'tipo8'>('tipo6');
+  const [canal, setCanal] = useState<'cooperativa' | 'corretor' | 'direto'>('cooperativa');
+  const [hedge, setHedge] = useState(30);
 
-  // Price composition data baseado no protótipo
-  const priceCompositionData = {
-    labels: ['Custo de Produção', 'Logística e Transporte', 'Beneficiamento', 'Margem de Mercado', 'Impostos e Taxas'],
-    datasets: [
-      {
-        data: [45, 15, 12, 18, 10],
-        backgroundColor: [
-          '#8B4513', // Custo de Produção
-          '#A0522D', // Logística
-          '#CD853F', // Beneficiamento
-          '#DEB887', // Margem
-          '#F4A460', // Impostos
-        ],
-        borderColor: '#fff',
-        borderWidth: 2,
-      },
-    ],
-  };
-
-  // Impact factors baseado no protótipo
-  const impactFactors = [
-    { icon: BsCloudRain, label: 'Clima', impact: 35, color: 'blue.500', trend: '+2.3%' },
-    { icon: BsTruck, label: 'Logística', impact: 25, color: 'orange.500', trend: '+5.1%' },
-    { icon: MdFactory, label: 'Beneficiamento', impact: 20, color: 'purple.500', trend: '-1.2%' },
-    { icon: MdTrendingUp, label: 'Mercado', impact: 10, color: 'green.500', trend: '+3.7%' },
-    { icon: BsBank, label: 'Impostos', impact: 5, color: 'red.500', trend: '0.0%' },
-    { icon: BsGlobe2, label: 'Global', impact: 5, color: 'cyan.500', trend: '+1.8%' },
-  ];
-
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: true,
-        position: 'right' as const,
-      },
-    },
-  };
-
-  // Market news
-  const marketNews = [
+  // KPIs Principais
+  const kpisPrincipais = [
     {
-      title: 'Geada afeta 15% da produção brasileira',
-      description: 'Produtores relatam perdas significativas após frente fria',
-      priority: 'Alta',
-      time: '2h atrás',
-      relevance: 'high',
+      icon: FaCoffee,
+      label: 'Preço Médio Hoje',
+      value: 'R$ 1.800',
+      change: '',
+      trend: 'up',
+      color: currentTheme.colors.status.success
     },
     {
-      title: 'Exportações batem recorde mensal',
-      description: 'Volume exportado supera expectativas do mercado',
-      priority: 'Alta',
-      time: '5h atrás',
-      relevance: 'high',
+      icon: FaChartLine,
+      label: 'Tipo mais Valorizado',
+      value: 'Tipo 6',
+      change: '',
+      trend: 'up',
+      color: currentTheme.colors.status.warning
     },
     {
-      title: 'Demanda por cafés especiais cresce 8%',
-      description: 'Mercado premium ganha espaço internacional',
-      priority: 'Média',
-      time: '8h atrás',
-      relevance: 'medium',
+      icon: FaDollarSign,
+      label: 'Melhor Canal',
+      value: 'Cooperativa',
+      change: '',
+      trend: 'up',
+      color: currentTheme.colors.status.info
     },
     {
-      title: 'Bolsa de NY fecha em alta pelo terceiro dia',
-      description: 'Contratos futuros apresentam valorização',
-      priority: 'Média',
-      time: '1d atrás',
-      relevance: 'medium',
-    },
-    {
-      title: 'Colheita na Colômbia dentro do esperado',
-      description: 'Produção colombiana mantém ritmo normal',
-      priority: 'Baixa',
-      time: '2d atrás',
-      relevance: 'low',
-    },
-  ];
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'Alta':
-        return 'red';
-      case 'Média':
-        return 'orange';
-      case 'Baixa':
-        return 'green';
-      default:
-        return 'gray';
+      icon: FaArrowTrendUp,
+      label: 'Clima Safra',
+      value: '☀️ Normal',
+      change: '',
+      trend: 'up',
+      color: currentTheme.colors.primary
     }
+  ];
+
+  // Dados para calculadora
+  const precoBase = 1842;
+  const ajustesQualidade: Record<'tipo2' | 'tipo4' | 'tipo6' | 'tipo8', number> = {
+    tipo2: 150,
+    tipo4: 100,
+    tipo6: 0,
+    tipo8: -100
   };
 
-  const getRelevanceColor = (relevance: string) => {
-    switch (relevance) {
-      case 'high':
-        return 'green.100';
-      case 'medium':
-        return 'yellow.100';
-      case 'low':
-        return 'gray.100';
-      default:
-        return 'gray.100';
-    }
+  const comissaoCanal: Record<'cooperativa' | 'corretor' | 'direto', number> = {
+    cooperativa: 0.005,
+    corretor: 0.01,
+    direto: 0
   };
+
+  // Cálculo do preço final
+  const calcularPrecoFinal = () => {
+    const ajusteQualidade = ajustesQualidade[qualidade];
+    const precoComQualidade = precoBase + ajusteQualidade;
+    const comissao = precoComQualidade * comissaoCanal[canal];
+    const precoLiquido = precoComQualidade - comissao;
+    const valorTotal = (precoLiquido * quantidade) / 60; // convertendo para sacas
+    
+    return {
+      precoUnitario: precoComQualidade,
+      comissao: comissao,
+      precoLiquido: precoLiquido,
+      valorTotal: valorTotal,
+      hedgeValor: valorTotal * (hedge / 100)
+    };
+  };
+
+  const resultado = calcularPrecoFinal();
+
+  // Simulação de cenários
+  const cenarios = [
+    {
+      nome: 'Otimista',
+      variacao: '+15%',
+      precoEstimado: Math.round(precoBase * 1.15),
+      probabilidade: '25%',
+      cor: 'green'
+    },
+    {
+      nome: 'Realista',
+      variacao: '+5%',
+      precoEstimado: Math.round(precoBase * 1.05),
+      probabilidade: '50%',
+      cor: 'blue'
+    },
+    {
+      nome: 'Pessimista',
+      variacao: '-10%',
+      precoEstimado: Math.round(precoBase * 0.9),
+      probabilidade: '25%',
+      cor: 'red'
+    }
+  ];
 
   return (
     <Box>
-      <PageHeader 
-        title="Análise de Componentes do Preço do Café" 
-        subtitle="Dashboard completo com indicadores de mercado e previsões"
+      <PageHeader
+        title="Central de Análise e Simulação"
+        subtitle="KPIs, Calculadora de Preços e Simulação de Vendas"
         icon={Coffee}
       />
       <Container maxW="container.2xl" py={8}>
-        <Grid templateColumns={{ base: '1fr', lg: '3fr 1fr' }} gap={8}>
-          {/* Main Content Area */}
+        <Grid templateColumns={{ base: '1fr', lg: '4fr 1fr' }} gap={6}>
+          {/* Área Principal */}
           <GridItem>
-            {/* KPI Grid */}
-            <SimpleGrid columns={{ base: 2, md: 3, lg: 6 }} spacing={4} mb={8}>
-              {kpis.map((kpi, index) => (
-                <Card key={index} bg={bgCard} borderWidth={1} borderColor={borderColor}>
-                  <CardBody p={4}>
-                    <Stat textAlign="center">
-                      <Icon as={kpi.icon} boxSize={6} color="coffee.500" mb={2} />
-                      <StatLabel fontSize="xs" color="gray.600">{kpi.label}</StatLabel>
-                      <StatNumber fontSize="lg">{kpi.value}</StatNumber>
-                      <StatHelpText fontSize="xs">
-                        {kpi.type !== 'neutral' && (
-                          <StatArrow type={kpi.type as 'increase' | 'decrease'} />
-                        )}
-                        {kpi.change}
-                      </StatHelpText>
-                    </Stat>
-                  </CardBody>
-                </Card>
-              ))}
-            </SimpleGrid>
-
-            {/* Market Predictions */}
-            <Card bg={bgCard} borderWidth={1} borderColor={borderColor} mb={8}>
+            {/* KPIs Principais */}
+            <Card bg={bgCard} borderWidth={1} borderColor={borderColor} mb={6}>
               <CardHeader>
-                <Flex align="center">
-                  <Heading size="md">📊 Previsões de Mercado</Heading>
-                  <Spacer />
-                  <Badge colorScheme="green" fontSize="xs">Atualizado</Badge>
-                </Flex>
+                <Heading size="md">📊 KPIs Principais do Mercado</Heading>
               </CardHeader>
               <CardBody>
-                <Grid templateColumns={{ base: '1fr', md: 'repeat(3, 1fr)' }} gap={6}>
-                  {marketPredictions.map((prediction, index) => (
-                    <Card key={index} bg="gray.50" borderWidth={1} borderColor={borderColor}>
-                      <CardBody>
-                        <Text fontWeight="bold" mb={4}>{prediction.period}</Text>
-                        
-                        <VStack spacing={3} align="stretch">
-                          <Box>
-                            <Flex justify="space-between" mb={1}>
-                              <Text fontSize="sm">Alta</Text>
-                              <Text fontSize="sm" fontWeight="bold">{prediction.high}%</Text>
-                            </Flex>
-                            <Progress value={prediction.high} colorScheme="green" size="lg" borderRadius="md" />
-                          </Box>
-                          
-                          <Box>
-                            <Flex justify="space-between" mb={1}>
-                              <Text fontSize="sm">Baixa</Text>
-                              <Text fontSize="sm" fontWeight="bold">{prediction.low}%</Text>
-                            </Flex>
-                            <Progress value={prediction.low} colorScheme="red" size="lg" borderRadius="md" />
-                          </Box>
-                        </VStack>
-                        
-                        <Divider my={3} />
-                        
-                        <VStack spacing={1} align="stretch">
-                          <Text fontSize="xs" color="gray.600">Faixa Prevista:</Text>
-                          <Text fontSize="sm" fontWeight="bold">{prediction.range}</Text>
-                          <Badge colorScheme={prediction.confidence === 'Alta' ? 'green' : 'yellow'} size="sm">
-                            Confiança: {prediction.confidence}
-                          </Badge>
-                        </VStack>
-                      </CardBody>
-                    </Card>
-                  ))}
-                </Grid>
-              </CardBody>
-            </Card>
-
-            {/* Price Composition Chart */}
-            <Card bg={bgCard} borderWidth={1} borderColor={borderColor} mb={8}>
-              <CardHeader>
-                <Heading size="md">📈 Composição do Preço do Café</Heading>
-              </CardHeader>
-              <CardBody>
-                <Box h="400px">
-                  <Doughnut data={priceCompositionData} options={chartOptions} />
-                </Box>
-              </CardBody>
-            </Card>
-
-            {/* Impact Factors */}
-            <Card bg={bgCard} borderWidth={1} borderColor={borderColor}>
-              <CardHeader>
-                <Heading size="md">⚡ Fatores de Impacto</Heading>
-              </CardHeader>
-              <CardBody>
-                <SimpleGrid columns={{ base: 2, md: 3, lg: 6 }} spacing={4}>
-                  {impactFactors.map((factor, index) => (
-                    <Card key={index} bg="gray.50" borderWidth={1} borderColor={borderColor}>
-                      <CardBody textAlign="center" p={4}>
-                        <Icon as={factor.icon} boxSize={8} color={factor.color} mb={2} />
-                        <Text fontSize="sm" fontWeight="bold" mb={1}>{factor.label}</Text>
-                        <Text fontSize="2xl" fontWeight="bold" color={factor.color} mb={1}>
-                          {factor.impact}%
-                        </Text>
-                        <Text fontSize="xs" color="gray.600">
-                          {factor.trend}
-                        </Text>
+                <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4}>
+                  {kpisPrincipais.map((kpi, idx) => (
+                    <Card key={idx} bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                      <CardBody textAlign="center">
+                        <Icon as={kpi.icon} boxSize={8} color={kpi.color} mb={4} />
+                        <Stat>
+                          <StatLabel fontSize="sm">{kpi.label}</StatLabel>
+                          <StatNumber fontSize="xl">{kpi.value}</StatNumber>
+                          <StatHelpText>
+                            <StatArrow type={kpi.trend === 'up' ? 'increase' : 'decrease'} />
+                            {kpi.change}
+                          </StatHelpText>
+                        </Stat>
                       </CardBody>
                     </Card>
                   ))}
                 </SimpleGrid>
               </CardBody>
             </Card>
+
+
+            {/* Simulação de Cenários */}
+            <Card bg={bgCard} borderWidth={1} borderColor={borderColor} mb={6}>
+              <CardHeader>
+                <Flex align="center">
+                  <Icon as={FaChartLine} mr={4} color={currentTheme.colors.accent} />
+                  <Heading size="md">Simulação de Cenários - Próximos 30 dias</Heading>
+                </Flex>
+              </CardHeader>
+              <CardBody>
+                <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4}>
+                  {cenarios.map((cenario, idx) => {
+                    const getCorCenario = (cor: string) => {
+                      switch(cor) {
+                        case 'green': return currentTheme.colors.status.success;
+                        case 'blue': return currentTheme.colors.status.info;
+                        case 'red': return currentTheme.colors.status.error;
+                        default: return currentTheme.colors.primary;
+                      }
+                    };
+                    const corTema = getCorCenario(cenario.cor);
+                    
+                    return (
+                      <Card key={idx} bg={subCardBg} borderWidth={2} borderColor={corTema}>
+                        <CardBody textAlign="center">
+                          <Badge bg={corTema} color="white" mb={3} fontSize="sm">
+                            {cenario.nome}
+                          </Badge>
+                          <VStack spacing={2}>
+                            <Text fontSize="lg" fontWeight="bold">
+                              {cenario.variacao}
+                            </Text>
+                            <Text fontSize="2xl" fontWeight="bold" color={corTema}>
+                              R$ {cenario.precoEstimado}
+                            </Text>
+                            <Text fontSize="sm" color="gray.600">
+                              Probabilidade: {cenario.probabilidade}
+                            </Text>
+                            <Progress
+                              value={parseInt(cenario.probabilidade)}
+                              bg={currentTheme.colors.background.secondary}
+                              size="lg"
+                              w="100%"
+                              borderRadius="md"
+                              sx={{'& > div': { bg: corTema }}}
+                            />
+                          </VStack>
+                        </CardBody>
+                      </Card>
+                    );
+                  })}
+                </SimpleGrid>
+
+                <Alert status="warning" mt={6}>
+                  <AlertIcon />
+                  <Box>
+                    <AlertTitle>Recomendação:</AlertTitle>
+                    <AlertDescription>
+                      Com base na volatilidade atual de 24.3%, considere fazer hedge de 30-50% da sua produção.
+                    </AlertDescription>
+                  </Box>
+                </Alert>
+              </CardBody>
+            </Card>
+
+            {/* Canais de Comercialização */}
+            <Card bg={bgCard} borderWidth={1} borderColor={borderColor} mb={6}>
+              <CardHeader>
+                <Heading size="md">📦 Canais de Comercialização</Heading>
+              </CardHeader>
+              <CardBody>
+                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+                  <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                    <CardBody>
+                      <Flex justify="space-between" align="center" mb={4}>
+                        <Heading size="sm">Via Cooperativa</Heading>
+                        <Badge bg={currentTheme.colors.status.success} color="white" fontSize="lg" px={3} py={1}>
+                          65%
+                        </Badge>
+                      </Flex>
+                      <VStack align="stretch" spacing={4}>
+                        <Box>
+                          <Text fontSize="sm" color="gray.600" mb={1}>Segurança na Venda</Text>
+                          <Progress value={90} bg={currentTheme.colors.background.secondary} borderRadius="md" size="sm" sx={{'& > div': { bg: currentTheme.colors.status.success }}} />
+                        </Box>
+                        <Box>
+                          <Text fontSize="sm" color="gray.600" mb={1}>Assistência Técnica</Text>
+                          <Progress value={95} bg={currentTheme.colors.background.secondary} borderRadius="md" size="sm" sx={{'& > div': { bg: currentTheme.colors.status.success }}} />
+                        </Box>
+                        <Box>
+                          <Text fontSize="sm" color="gray.600" mb={1}>Preços Competitivos</Text>
+                          <Progress value={85} bg={currentTheme.colors.background.secondary} borderRadius="md" size="sm" sx={{'& > div': { bg: currentTheme.colors.status.success }}} />
+                        </Box>
+                        <Divider />
+                        <Flex justify="space-between" align="center">
+                          <Text fontSize="sm" fontWeight="medium">Comissão:</Text>
+                          <Badge bg={currentTheme.colors.status.info} color="white" variant="subtle">0,5%</Badge>
+                        </Flex>
+                      </VStack>
+                    </CardBody>
+                  </Card>
+                  <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                    <CardBody>
+                      <Flex justify="space-between" align="center" mb={4}>
+                        <Heading size="sm">Via Corretor</Heading>
+                        <Badge bg={currentTheme.colors.status.warning} color="white" fontSize="lg" px={3} py={1}>
+                          35%
+                        </Badge>
+                      </Flex>
+                      <VStack align="stretch" spacing={4}>
+                        <Box>
+                          <Text fontSize="sm" color="gray.600" mb={1}>Flexibilidade</Text>
+                          <Progress value={95} bg={currentTheme.colors.background.secondary} borderRadius="md" size="sm" sx={{'& > div': { bg: currentTheme.colors.status.warning }}} />
+                        </Box>
+                        <Box>
+                          <Text fontSize="sm" color="gray.600" mb={1}>Agilidade na Venda</Text>
+                          <Progress value={90} bg={currentTheme.colors.background.secondary} borderRadius="md" size="sm" sx={{'& > div': { bg: currentTheme.colors.status.warning }}} />
+                        </Box>
+                        <Box>
+                          <Text fontSize="sm" color="gray.600" mb={1}>Negociação Direta</Text>
+                          <Progress value={80} bg={currentTheme.colors.background.secondary} borderRadius="md" size="sm" sx={{'& > div': { bg: currentTheme.colors.status.warning }}} />
+                        </Box>
+                        <Divider />
+                        <Flex justify="space-between" align="center">
+                          <Text fontSize="sm" fontWeight="medium">Comissão:</Text>
+                          <Badge bg={currentTheme.colors.status.info} color="white" variant="subtle">0,5-1%</Badge>
+                        </Flex>
+                      </VStack>
+                    </CardBody>
+                  </Card>
+                </SimpleGrid>
+                <Alert status="info" mt={6}>
+                  <AlertIcon />
+                  <Box>
+                    <AlertTitle>Análise dos Canais</AlertTitle>
+                    <AlertDescription>
+                      A cooperativa oferece maior segurança e suporte técnico, enquanto o corretor proporciona mais flexibilidade e agilidade nas negociações. Escolha baseada no seu perfil de risco.
+                    </AlertDescription>
+                  </Box>
+                </Alert>
+              </CardBody>
+            </Card>
+
+            {/* Comparativo de Mercados */}
+            <Card bg={bgCard} borderWidth={1} borderColor={borderColor} mb={6}>
+              <CardHeader>
+                <Heading size="md">💱 Comparativo de Mercados</Heading>
+              </CardHeader>
+              <CardBody>
+                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+                  {/* Mercado Interno */}
+                  <Card bg={subCardBg} borderWidth={2} borderColor={currentTheme.colors.status.success}>
+                    <CardHeader pb={2}>
+                      <Flex align="center" justify="space-between">
+                        <HStack>
+                          <Icon as={FaCoffee} color={currentTheme.colors.status.success} />
+                          <Heading size="sm">Mercado Interno</Heading>
+                        </HStack>
+                        <Badge bg={currentTheme.colors.status.success} color="white" fontSize="md" px={3} py={1}>
+                          40%
+                        </Badge>
+                      </Flex>
+                    </CardHeader>
+                    <CardBody pt={2}>
+                      <VStack align="stretch" spacing={4}>
+                        <Stat>
+                          <StatLabel fontSize="sm">Volume Negociado</StatLabel>
+                          <StatNumber fontSize="lg">25% do total</StatNumber>
+                          <StatHelpText>
+                            <StatArrow type="increase" />
+                            +3% vs mês anterior
+                          </StatHelpText>
+                        </Stat>
+                        <Divider />
+                        <Stat>
+                          <StatLabel fontSize="sm">Preço Médio</StatLabel>
+                          <StatNumber fontSize="xl" color={currentTheme.colors.status.success}>R$ 1.750</StatNumber>
+                          <StatHelpText>
+                            Por saca de 60kg
+                          </StatHelpText>
+                        </Stat>
+                        <Divider />
+                        <Box>
+                          <Text fontSize="sm" fontWeight="medium" mb={2}>Principais Destinos:</Text>
+                          <VStack align="stretch" spacing={1}>
+                            <HStack>
+                              <Icon as={FaCheckCircle} color={currentTheme.colors.status.success} boxSize={3} />
+                              <Text fontSize="sm">São Paulo (35%)</Text>
+                            </HStack>
+                            <HStack>
+                              <Icon as={FaCheckCircle} color={currentTheme.colors.status.success} boxSize={3} />
+                              <Text fontSize="sm">Minas Gerais (30%)</Text>
+                            </HStack>
+                            <HStack>
+                              <Icon as={FaCheckCircle} color={currentTheme.colors.status.success} boxSize={3} />
+                              <Text fontSize="sm">Rio de Janeiro (20%)</Text>
+                            </HStack>
+                          </VStack>
+                        </Box>
+                      </VStack>
+                    </CardBody>
+                  </Card>
+
+                  {/* Mercado Externo */}
+                  <Card bg={subCardBg} borderWidth={2} borderColor={currentTheme.colors.status.info}>
+                    <CardHeader pb={2}>
+                      <Flex align="center" justify="space-between">
+                        <HStack>
+                          <Icon as={FaGlobeAmericas} color={currentTheme.colors.status.info} />
+                          <Heading size="sm">Mercado Externo</Heading>
+                        </HStack>
+                        <Badge bg={currentTheme.colors.status.info} color="white" fontSize="md" px={3} py={1}>
+                          60%
+                        </Badge>
+                      </Flex>
+                    </CardHeader>
+                    <CardBody pt={2}>
+                      <VStack align="stretch" spacing={4}>
+                        <Stat>
+                          <StatLabel fontSize="sm">Volume Exportado</StatLabel>
+                          <StatNumber fontSize="lg">7M sacas</StatNumber>
+                          <StatHelpText>
+                            <StatArrow type="increase" />
+                            +5% vs ano anterior
+                          </StatHelpText>
+                        </Stat>
+                        <Divider />
+                        <Stat>
+                          <StatLabel fontSize="sm">Preço Médio</StatLabel>
+                          <StatNumber fontSize="xl" color={currentTheme.colors.status.info}>R$ 1.850</StatNumber>
+                          <StatHelpText>
+                            Por saca de 60kg
+                          </StatHelpText>
+                        </Stat>
+                        <Divider />
+                        <Box>
+                          <Text fontSize="sm" fontWeight="medium" mb={2}>Principais Destinos:</Text>
+                          <VStack align="stretch" spacing={1}>
+                            <HStack>
+                              <Icon as={FaCheckCircle} color={currentTheme.colors.status.info} boxSize={3} />
+                              <Text fontSize="sm">EUA (28%)</Text>
+                            </HStack>
+                            <HStack>
+                              <Icon as={FaCheckCircle} color={currentTheme.colors.status.info} boxSize={3} />
+                              <Text fontSize="sm">Alemanha (18%)</Text>
+                            </HStack>
+                            <HStack>
+                              <Icon as={FaCheckCircle} color={currentTheme.colors.status.info} boxSize={3} />
+                              <Text fontSize="sm">Itália (15%)</Text>
+                            </HStack>
+                          </VStack>
+                        </Box>
+                      </VStack>
+                    </CardBody>
+                  </Card>
+                </SimpleGrid>
+
+                {/* Tabela Comparativa de Preços */}
+                <Box mt={6}>
+                  <Heading size="sm" mb={4}>Comparativo de Preços por Mercado</Heading>
+                  <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                    <CardBody p={0}>
+                      <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={0}>
+                        <Box p={4} borderRight={{ base: "none", md: "1px" }} borderBottom={{ base: "1px", lg: "none" }} borderColor={borderColor}>
+                          <VStack align="stretch" spacing={2}>
+                            <Text fontSize="sm" fontWeight="bold" color="gray.600">BM&F Bovespa</Text>
+                            <Text fontSize="xl" fontWeight="bold">R$ 1.245,00</Text>
+                            <HStack>
+                              <Badge bg={currentTheme.colors.status.success} color="white">+2.3%</Badge>
+                              <HStack spacing={1}>
+                                <Icon as={MdTrendingUp} color={currentTheme.colors.status.success} boxSize={4} />
+                                <Text fontSize="sm" color={currentTheme.colors.status.success}>Alta</Text>
+                              </HStack>
+                            </HStack>
+                          </VStack>
+                        </Box>
+                        <Box p={4} borderRight={{ base: "none", lg: "1px" }} borderBottom={{ base: "1px", md: "none" }} borderColor={borderColor}>
+                          <VStack align="stretch" spacing={2}>
+                            <Text fontSize="sm" fontWeight="bold" color="gray.600">ICE Futures NY</Text>
+                            <Text fontSize="xl" fontWeight="bold">US$ 245,50</Text>
+                            <HStack>
+                              <Badge bg={currentTheme.colors.status.error} color="white">-1.2%</Badge>
+                              <HStack spacing={1}>
+                                <Icon as={MdTrendingDown} color={currentTheme.colors.status.error} boxSize={4} />
+                                <Text fontSize="sm" color={currentTheme.colors.status.error}>Baixa</Text>
+                              </HStack>
+                            </HStack>
+                          </VStack>
+                        </Box>
+                        <Box p={4} borderRight={{ base: "none", md: "1px" }} borderBottom={{ base: "1px", lg: "none" }} borderColor={borderColor}>
+                          <VStack align="stretch" spacing={2}>
+                            <Text fontSize="sm" fontWeight="bold" color="gray.600">CEPEA/ESALQ</Text>
+                            <Text fontSize="xl" fontWeight="bold">R$ 1.198,00</Text>
+                            <HStack>
+                              <Badge bg={currentTheme.colors.status.warning} color="white">+0.8%</Badge>
+                              <HStack spacing={1}>
+                                <Icon as={MdTrendingFlat} color={currentTheme.colors.status.warning} boxSize={4} />
+                                <Text fontSize="sm" color={currentTheme.colors.status.warning}>Estável</Text>
+                              </HStack>
+                            </HStack>
+                          </VStack>
+                        </Box>
+                        <Box p={4}>
+                          <VStack align="stretch" spacing={2}>
+                            <Text fontSize="sm" fontWeight="bold" color="gray.600">Spot Local</Text>
+                            <Text fontSize="xl" fontWeight="bold">R$ 1.180,00</Text>
+                            <HStack>
+                              <Badge bg={currentTheme.colors.status.success} color="white">+1.5%</Badge>
+                              <HStack spacing={1}>
+                                <Icon as={MdTrendingUp} color={currentTheme.colors.status.success} boxSize={4} />
+                                <Text fontSize="sm" color={currentTheme.colors.status.success}>Alta</Text>
+                              </HStack>
+                            </HStack>
+                          </VStack>
+                        </Box>
+                      </SimpleGrid>
+                    </CardBody>
+                  </Card>
+                </Box>
+
+                {/* Componentes do Preço */}
+                <Box mt={6}>
+                  <Heading size="sm" mb={4}>Componentes do Preço (R$/saca)</Heading>
+                  <SimpleGrid columns={{ base: 2, md: 5 }} spacing={4}>
+                    <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                      <CardBody textAlign="center" p={3}>
+                        <Text fontSize="2xl" mb={1}>🌱</Text>
+                        <Text fontSize="lg" fontWeight="bold">45%</Text>
+                        <Text fontSize="xs" color="gray.600">Produção</Text>
+                      </CardBody>
+                    </Card>
+                    <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                      <CardBody textAlign="center" p={3}>
+                        <Text fontSize="2xl" mb={1}>🚚</Text>
+                        <Text fontSize="lg" fontWeight="bold">15%</Text>
+                        <Text fontSize="xs" color="gray.600">Logística</Text>
+                      </CardBody>
+                    </Card>
+                    <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                      <CardBody textAlign="center" p={3}>
+                        <Text fontSize="2xl" mb={1}>⚙️</Text>
+                        <Text fontSize="lg" fontWeight="bold">12%</Text>
+                        <Text fontSize="xs" color="gray.600">Benefício</Text>
+                      </CardBody>
+                    </Card>
+                    <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                      <CardBody textAlign="center" p={3}>
+                        <Text fontSize="2xl" mb={1}>💹</Text>
+                        <Text fontSize="lg" fontWeight="bold">18%</Text>
+                        <Text fontSize="xs" color="gray.600">Mercado</Text>
+                      </CardBody>
+                    </Card>
+                    <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                      <CardBody textAlign="center" p={3}>
+                        <Text fontSize="2xl" mb={1}>📋</Text>
+                        <Text fontSize="lg" fontWeight="bold">10%</Text>
+                        <Text fontSize="xs" color="gray.600">Taxas</Text>
+                      </CardBody>
+                    </Card>
+                  </SimpleGrid>
+                </Box>
+
+                {/* Alerta de Oportunidade */}
+                <Alert status="info" mt={6} borderRadius="md" borderLeftWidth={4} borderLeftColor="blue.400">
+                  <AlertIcon />
+                  <Box>
+                    <AlertTitle>Oportunidade de Mercado</AlertTitle>
+                    <AlertDescription>
+                      O mercado externo está pagando R$ 100 a mais por saca comparado ao mercado interno.
+                      Considere aumentar sua participação nas exportações através de cooperativas certificadas.
+                    </AlertDescription>
+                  </Box>
+                </Alert>
+              </CardBody>
+            </Card>
+
+            {/* Instrumentos de Proteção */}
+            <Card bg={bgCard} borderWidth={1} borderColor={borderColor} mb={6}>
+              <CardHeader>
+                <Heading size="md">🛡️ Instrumentos de Proteção</Heading>
+              </CardHeader>
+              <CardBody>
+                <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4} mb={6}>
+                  <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                    <CardBody textAlign="center">
+                      <VStack spacing={4}>
+                        <Text fontSize="sm" color="gray.600" fontWeight="medium">BMF (Brasil)</Text>
+                        <Heading size="lg" color={currentTheme.colors.status.info}>ICF</Heading>
+                        <Badge bg={currentTheme.colors.status.info} color="white" fontSize="md" px={3} py={1}>
+                          Contrato Futuro
+                        </Badge>
+                        <VStack spacing={1} align="stretch" w="100%">
+                          <Flex justify="space-between">
+                            <Text fontSize="xs" color="gray.600">Vencimento:</Text>
+                            <Text fontSize="xs" fontWeight="medium">Mar/24</Text>
+                          </Flex>
+                          <Flex justify="space-between">
+                            <Text fontSize="xs" color="gray.600">Lote Mínimo:</Text>
+                            <Text fontSize="xs" fontWeight="medium">100 sacas</Text>
+                          </Flex>
+                          <Flex justify="space-between">
+                            <Text fontSize="xs" color="gray.600">Margem:</Text>
+                            <Text fontSize="xs" fontWeight="medium">R$ 5.000</Text>
+                          </Flex>
+                        </VStack>
+                      </VStack>
+                    </CardBody>
+                  </Card>
+
+                  <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                    <CardBody textAlign="center">
+                      <VStack spacing={4}>
+                        <Text fontSize="sm" color="gray.600" fontWeight="medium">NY (EUA)</Text>
+                        <Heading size="lg" color={currentTheme.colors.status.success}>KC</Heading>
+                        <Badge bg={currentTheme.colors.status.success} color="white" fontSize="md" px={3} py={1}>
+                          Coffee C
+                        </Badge>
+                        <VStack spacing={1} align="stretch" w="100%">
+                          <Flex justify="space-between">
+                            <Text fontSize="xs" color="gray.600">Vencimento:</Text>
+                            <Text fontSize="xs" fontWeight="medium">May/24</Text>
+                          </Flex>
+                          <Flex justify="space-between">
+                            <Text fontSize="xs" color="gray.600">Lote Mínimo:</Text>
+                            <Text fontSize="xs" fontWeight="medium">37.500 lbs</Text>
+                          </Flex>
+                          <Flex justify="space-between">
+                            <Text fontSize="xs" color="gray.600">Margem:</Text>
+                            <Text fontSize="xs" fontWeight="medium">US$ 2.500</Text>
+                          </Flex>
+                        </VStack>
+                      </VStack>
+                    </CardBody>
+                  </Card>
+
+                  <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                    <CardBody textAlign="center">
+                      <VStack spacing={4}>
+                        <Text fontSize="sm" color="gray.600" fontWeight="medium">Hedge Médio</Text>
+                        <Heading size="lg" color={currentTheme.colors.accent}>30%</Heading>
+                        <Badge bg={currentTheme.colors.accent} color="white" fontSize="md" px={3} py={1}>
+                          Recomendado
+                        </Badge>
+                        <VStack spacing={1} align="stretch" w="100%">
+                          <Flex justify="space-between">
+                            <Text fontSize="xs" color="gray.600">Mínimo:</Text>
+                            <Text fontSize="xs" fontWeight="medium">20%</Text>
+                          </Flex>
+                          <Flex justify="space-between">
+                            <Text fontSize="xs" color="gray.600">Máximo:</Text>
+                            <Text fontSize="xs" fontWeight="medium">50%</Text>
+                          </Flex>
+                          <Flex justify="space-between">
+                            <Text fontSize="xs" color="gray.600">Prazo:</Text>
+                            <Text fontSize="xs" fontWeight="medium">3-6 meses</Text>
+                          </Flex>
+                        </VStack>
+                      </VStack>
+                    </CardBody>
+                  </Card>
+                </SimpleGrid>
+
+                {/* Indicadores de Proteção */}
+                <Box mb={6}>
+                  <Heading size="sm" mb={4}>Estratégias de Proteção Disponíveis</Heading>
+                  <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+                    <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                      <CardBody>
+                        <HStack mb={3}>
+                          <Icon as={FaChild} color={currentTheme.colors.status.warning} boxSize={5} />
+                          <Text fontWeight="medium">Contratos Futuros</Text>
+                        </HStack>
+                        <VStack align="stretch" spacing={2}>
+                          <Progress value={75} bg={currentTheme.colors.background.secondary} size="sm" borderRadius="md" sx={{'& > div': { bg: currentTheme.colors.status.warning }}} />
+                          <Text fontSize="xs" color="gray.600">75% de eficácia na proteção</Text>
+                          <List spacing={1}>
+                            <ListItem fontSize="sm">
+                              <ListIcon as={FaCheckCircle} color={currentTheme.colors.status.success} />
+                              Trava preços futuros
+                            </ListItem>
+                            <ListItem fontSize="sm">
+                              <ListIcon as={FaCheckCircle} color={currentTheme.colors.status.success} />
+                              Reduz volatilidade
+                            </ListItem>
+                            <ListItem fontSize="sm">
+                              <ListIcon as={FaCheckCircle} color={currentTheme.colors.status.success} />
+                              Garantia de venda
+                            </ListItem>
+                          </List>
+                        </VStack>
+                      </CardBody>
+                    </Card>
+
+                    <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                      <CardBody>
+                        <HStack mb={3}>
+                          <Icon as={FaChartLine} color={currentTheme.colors.status.info} boxSize={5} />
+                          <Text fontWeight="medium">Opções de Venda</Text>
+                        </HStack>
+                        <VStack align="stretch" spacing={2}>
+                          <Progress value={60} bg={currentTheme.colors.background.secondary} size="sm" borderRadius="md" sx={{'& > div': { bg: currentTheme.colors.status.info }}} />
+                          <Text fontSize="xs" color="gray.600">60% de eficácia na proteção</Text>
+                          <List spacing={1}>
+                            <ListItem fontSize="sm">
+                              <ListIcon as={FaCheckCircle} color={currentTheme.colors.status.success} />
+                              Proteção de preço mínimo
+                            </ListItem>
+                            <ListItem fontSize="sm">
+                              <ListIcon as={FaCheckCircle} color={currentTheme.colors.status.success} />
+                              Mantém upside
+                            </ListItem>
+                            <ListItem fontSize="sm">
+                              <ListIcon as={FaCheckCircle} color={currentTheme.colors.status.success} />
+                              Flexibilidade
+                            </ListItem>
+                          </List>
+                        </VStack>
+                      </CardBody>
+                    </Card>
+                  </SimpleGrid>
+                </Box>
+
+                <Alert status="info" borderRadius="md">
+                  <AlertIcon />
+                  <Box>
+                    <AlertTitle>Dica de Proteção</AlertTitle>
+                    <AlertDescription>
+                      Diversifique suas estratégias de hedge utilizando uma combinação de contratos futuros (70%) e opções (30%) para maximizar a proteção mantendo potencial de ganho.
+                    </AlertDescription>
+                  </Box>
+                </Alert>
+              </CardBody>
+            </Card>
+
+            {/* Fontes de Dados Disponíveis */}
+            <Card bg={bgCard} borderWidth={1} borderColor={borderColor} mb={6}>
+              <CardHeader>
+                <Heading size="md">📊 Fontes de Dados Disponíveis</Heading>
+              </CardHeader>
+              <CardBody>
+                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} mb={6}>
+                  <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                    <CardBody>
+                      <Flex justify="space-between" align="center" mb={4}>
+                        <HStack>
+                          <Icon as={FaDatabase} color={currentTheme.colors.status.info} boxSize={5} />
+                          <Heading size="sm">APIs em Tempo Real</Heading>
+                        </HStack>
+                        <Badge bg={currentTheme.colors.status.info} color="white" fontSize="lg" px={3} py={1}>
+                          40%
+                        </Badge>
+                      </Flex>
+                      <VStack align="stretch" spacing={4}>
+                        <Box>
+                          <Text fontSize="sm" color="gray.600" mb={1}>Cobertura de Dados</Text>
+                          <Progress value={85} bg={currentTheme.colors.background.secondary} size="sm" borderRadius="md" sx={{'& > div': { bg: currentTheme.colors.status.info }}} />
+                        </Box>
+                        <Box>
+                          <Text fontSize="sm" color="gray.600" mb={1}>Velocidade de Atualização</Text>
+                          <Progress value={95} bg={currentTheme.colors.background.secondary} size="sm" borderRadius="md" sx={{'& > div': { bg: currentTheme.colors.status.info }}} />
+                        </Box>
+                        <Box>
+                          <Text fontSize="sm" color="gray.600" mb={1}>Confiabilidade</Text>
+                          <Progress value={90} bg={currentTheme.colors.background.secondary} size="sm" borderRadius="md" sx={{'& > div': { bg: currentTheme.colors.status.info }}} />
+                        </Box>
+                        <Divider />
+                        <Flex justify="space-between" align="center">
+                          <Text fontSize="sm" fontWeight="medium">Atualização:</Text>
+                          <Badge bg={currentTheme.colors.status.success} color="white" variant="subtle">5 min</Badge>
+                        </Flex>
+                        <VStack align="stretch" spacing={1}>
+                          <Text fontSize="xs" color="gray.600">Fontes Incluídas:</Text>
+                          <HStack>
+                            <Icon as={FaCheckCircle} color={currentTheme.colors.status.success} boxSize={3} />
+                            <Text fontSize="xs">Bloomberg</Text>
+                          </HStack>
+                          <HStack>
+                            <Icon as={FaCheckCircle} color={currentTheme.colors.status.success} boxSize={3} />
+                            <Text fontSize="xs">Reuters</Text>
+                          </HStack>
+                          <HStack>
+                            <Icon as={FaCheckCircle} color={currentTheme.colors.status.success} boxSize={3} />
+                            <Text fontSize="xs">ICE Futures</Text>
+                          </HStack>
+                        </VStack>
+                      </VStack>
+                    </CardBody>
+                  </Card>
+
+                  <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                    <CardBody>
+                      <Flex justify="space-between" align="center" mb={4}>
+                        <HStack>
+                          <Icon as={FaGlobeAmericas} color={currentTheme.colors.status.success} boxSize={5} />
+                          <Heading size="sm">Dados Oficiais</Heading>
+                        </HStack>
+                        <Badge bg={currentTheme.colors.status.success} color="white" fontSize="lg" px={3} py={1}>
+                          60%
+                        </Badge>
+                      </Flex>
+                      <VStack align="stretch" spacing={4}>
+                        <Box>
+                          <Text fontSize="sm" color="gray.600" mb={1}>Cobertura de Dados</Text>
+                          <Progress value={100} bg={currentTheme.colors.background.secondary} size="sm" borderRadius="md" sx={{'& > div': { bg: currentTheme.colors.status.success }}} />
+                        </Box>
+                        <Box>
+                          <Text fontSize="sm" color="gray.600" mb={1}>Histórico Disponível</Text>
+                          <Progress value={95} bg={currentTheme.colors.background.secondary} size="sm" borderRadius="md" sx={{'& > div': { bg: currentTheme.colors.status.success }}} />
+                        </Box>
+                        <Box>
+                          <Text fontSize="sm" color="gray.600" mb={1}>Precisão</Text>
+                          <Progress value={98} bg={currentTheme.colors.background.secondary} size="sm" borderRadius="md" sx={{'& > div': { bg: currentTheme.colors.status.success }}} />
+                        </Box>
+                        <Divider />
+                        <Flex justify="space-between" align="center">
+                          <Text fontSize="sm" fontWeight="medium">Atualização:</Text>
+                          <Badge bg={currentTheme.colors.status.warning} color="white" variant="subtle">Diária</Badge>
+                        </Flex>
+                        <VStack align="stretch" spacing={1}>
+                          <Text fontSize="xs" color="gray.600">Fontes Incluídas:</Text>
+                          <HStack>
+                            <Icon as={FaCheckCircle} color={currentTheme.colors.status.success} boxSize={3} />
+                            <Text fontSize="xs">CONAB</Text>
+                          </HStack>
+                          <HStack>
+                            <Icon as={FaCheckCircle} color={currentTheme.colors.status.success} boxSize={3} />
+                            <Text fontSize="xs">CEPEA/ESALQ</Text>
+                          </HStack>
+                          <HStack>
+                            <Icon as={FaCheckCircle} color={currentTheme.colors.status.success} boxSize={3} />
+                            <Text fontSize="xs">MAPA</Text>
+                          </HStack>
+                        </VStack>
+                      </VStack>
+                    </CardBody>
+                  </Card>
+                </SimpleGrid>
+
+                {/* Indicadores de Disponibilidade */}
+                <Box mb={6}>
+                  <Heading size="sm" mb={4}>Disponibilidade por Tipo de Informação</Heading>
+                  <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4}>
+                    <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                      <CardBody textAlign="center">
+                        <VStack spacing={2}>
+                          <Text fontSize="sm" color="gray.600" fontWeight="medium">Preços</Text>
+                          <Icon as={FaCheckCircle} color={currentTheme.colors.status.success} boxSize={6} />
+                          <Badge bg={currentTheme.colors.status.success} color="white" fontSize="md" px={3} py={1}>
+                            ✓ API
+                          </Badge>
+                          <Text fontSize="xs" color="gray.600">Tempo real disponível</Text>
+                          <Progress value={100} bg={currentTheme.colors.background.secondary} size="xs" w="100%" borderRadius="md" sx={{'& > div': { bg: currentTheme.colors.status.success }}} />
+                        </VStack>
+                      </CardBody>
+                    </Card>
+
+                    <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                      <CardBody textAlign="center">
+                        <VStack spacing={2}>
+                          <Text fontSize="sm" color="gray.600" fontWeight="medium">Classificação</Text>
+                          <Icon as={FaDatabase} color={currentTheme.colors.status.warning} boxSize={6} />
+                          <Badge bg={currentTheme.colors.status.warning} color="white" fontSize="md" px={3} py={1}>
+                            ⚡ Web
+                          </Badge>
+                          <Text fontSize="xs" color="gray.600">Consulta sob demanda</Text>
+                          <Progress value={75} bg={currentTheme.colors.background.secondary} size="xs" w="100%" borderRadius="md" sx={{'& > div': { bg: currentTheme.colors.status.warning }}} />
+                        </VStack>
+                      </CardBody>
+                    </Card>
+
+                    <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                      <CardBody textAlign="center">
+                        <VStack spacing={2}>
+                          <Text fontSize="sm" color="gray.600" fontWeight="medium">Clima</Text>
+                          <Icon as={FaCheckCircle} color={currentTheme.colors.status.success} boxSize={6} />
+                          <Badge bg={currentTheme.colors.status.success} color="white" fontSize="md" px={3} py={1}>
+                            ✓ API
+                          </Badge>
+                          <Text fontSize="xs" color="gray.600">Atualização horária</Text>
+                          <Progress value={100} bg={currentTheme.colors.background.secondary} size="xs" w="100%" borderRadius="md" sx={{'& > div': { bg: currentTheme.colors.status.success }}} />
+                        </VStack>
+                      </CardBody>
+                    </Card>
+                  </SimpleGrid>
+                </Box>
+
+                {/* Métricas de Performance */}
+                <Box mb={6}>
+                  <Heading size="sm" mb={4}>Métricas de Performance das Fontes</Heading>
+                  <TableContainer>
+                    <Table variant="simple" size="sm">
+                      <Thead>
+                        <Tr>
+                          <Th>Fonte</Th>
+                          <Th isNumeric>Uptime</Th>
+                          <Th isNumeric>Latência</Th>
+                          <Th>Status</Th>
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        <Tr>
+                          <Td>API Bloomberg</Td>
+                          <Td isNumeric>99.9%</Td>
+                          <Td isNumeric>12ms</Td>
+                          <Td>
+                            <Badge bg={currentTheme.colors.status.success} color="white">Online</Badge>
+                          </Td>
+                        </Tr>
+                        <Tr>
+                          <Td>CONAB</Td>
+                          <Td isNumeric>98.5%</Td>
+                          <Td isNumeric>150ms</Td>
+                          <Td>
+                            <Badge bg={currentTheme.colors.status.success} color="white">Online</Badge>
+                          </Td>
+                        </Tr>
+                        <Tr>
+                          <Td>CEPEA/ESALQ</Td>
+                          <Td isNumeric>99.2%</Td>
+                          <Td isNumeric>85ms</Td>
+                          <Td>
+                            <Badge bg={currentTheme.colors.status.success} color="white">Online</Badge>
+                          </Td>
+                        </Tr>
+                        <Tr>
+                          <Td>Weather API</Td>
+                          <Td isNumeric>99.7%</Td>
+                          <Td isNumeric>45ms</Td>
+                          <Td>
+                            <Badge bg={currentTheme.colors.status.success} color="white">Online</Badge>
+                          </Td>
+                        </Tr>
+                      </Tbody>
+                    </Table>
+                  </TableContainer>
+                </Box>
+
+                <Alert status="success" borderRadius="md">
+                  <AlertIcon />
+                  <Box>
+                    <AlertTitle>Integração Completa</AlertTitle>
+                    <AlertDescription>
+                      Todas as fontes de dados estão operacionais e sincronizadas. Última atualização há 2 minutos.
+                      Taxa de sucesso nas últimas 24h: 99.8%
+                    </AlertDescription>
+                  </Box>
+                </Alert>
+              </CardBody>
+            </Card>
+
           </GridItem>
 
           {/* Sidebar */}
           <GridItem>
             <Card bg={bgCard} borderWidth={1} borderColor={borderColor} position="sticky" top={4}>
               <CardHeader>
-                <Flex align="center">
-                  <Heading size="md">📰 Notícias do Mercado</Heading>
-                  <Spacer />
-                  <Button size="sm" variant="ghost" leftIcon={<Icon as={BsArrowRepeat} />}>
-                    Atualizar
-                  </Button>
-                </Flex>
+                <Heading size="md">Ações Rápidas</Heading>
               </CardHeader>
               <CardBody>
                 <VStack spacing={4} align="stretch">
-                  {marketNews.map((news, index) => (
-                    <Box key={index}>
-                      <Card bg={getRelevanceColor(news.relevance)} borderWidth={1} borderColor={borderColor}>
-                        <CardBody p={3}>
-                          <Text fontWeight="bold" fontSize="sm" mb={1}>
-                            {news.title}
-                          </Text>
-                          <Text fontSize="xs" color="gray.600" mb={2}>
-                            {news.description}
-                          </Text>
-                          <Flex justify="space-between" align="center">
-                            <Badge colorScheme={getPriorityColor(news.priority)} fontSize="xs">
-                              {news.priority}
-                            </Badge>
-                            <Text fontSize="xs" color="gray.500">
-                              {news.time}
-                            </Text>
-                          </Flex>
-                        </CardBody>
-                      </Card>
-                      {index < marketNews.length - 1 && <Divider />}
+                  <Button leftIcon={<FaCalculator />} borderColor={currentTheme.colors.status.info} color={currentTheme.colors.status.info} variant="outline" onClick={onOpen}>
+                    Calculadora de Preços
+                  </Button>
+                  <Button leftIcon={<FaChartLine />} borderColor={currentTheme.colors.status.success} color={currentTheme.colors.status.success} variant="outline">
+                    Relatório Detalhado
+                  </Button>
+                  <Button leftIcon={<FaDollarSign />} borderColor={currentTheme.colors.accent} color={currentTheme.colors.accent} variant="outline">
+                    Configurar Alertas
+                  </Button>
+                </VStack>
+
+                <Divider my={6} />
+
+                <Heading size="sm" mb={4}>Alertas de Preço</Heading>
+                <VStack spacing={3} align="stretch">
+                  <Alert status="success" size="sm">
+                    <AlertIcon />
+                    <Box fontSize="sm">
+                      <Text fontWeight="bold">Meta atingida!</Text>
+                      <Text>Preço acima de R$ 1.800</Text>
                     </Box>
-                  ))}
+                  </Alert>
+                  <Alert status="warning" size="sm">
+                    <AlertIcon />
+                    <Box fontSize="sm">
+                      <Text fontWeight="bold">Atenção</Text>
+                      <Text>Volatilidade alta</Text>
+                    </Box>
+                  </Alert>
+                </VStack>
+
+                <Divider my={6} />
+
+                <Heading size="sm" mb={4}>Dicas de Mercado</Heading>
+                <VStack spacing={3} align="stretch">
+                  <Box p={3} bg={subCardBg} borderRadius="md">
+                    <HStack>
+                      <Text fontSize="lg">💡</Text>
+                      <Text fontSize="sm">Diversifique canais de venda para reduzir riscos</Text>
+                    </HStack>
+                  </Box>
+                  <Box p={3} bg={subCardBg} borderRadius="md">
+                    <HStack>
+                      <Text fontSize="lg">📈</Text>
+                      <Text fontSize="sm">Monitore clima semanalmente para decisões de hedge</Text>
+                    </HStack>
+                  </Box>
+                  <Box p={3} bg={subCardBg} borderRadius="md">
+                    <HStack>
+                      <Text fontSize="lg">🎯</Text>
+                      <Text fontSize="sm">Considere contratos futuros para 30% da safra</Text>
+                    </HStack>
+                  </Box>
                 </VStack>
               </CardBody>
             </Card>
           </GridItem>
         </Grid>
       </Container>
+
+      {/* Modal da Calculadora de Preços */}
+      <Modal isOpen={isOpen} onClose={onClose} size="6xl" isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            <Flex align="center">
+              <Icon as={FaCalculator} mr={4} color="blue.500" />
+              Calculadora de Preços
+            </Flex>
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={6}>
+            <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap={6}>
+              {/* Inputs */}
+              <VStack spacing={4} align="stretch">
+                <FormControl>
+                  <FormLabel>Quantidade (kg)</FormLabel>
+                  <NumberInput value={quantidade} onChange={(value) => setQuantidade(Number(value))}>
+                    <NumberInputField />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Qualidade do Café</FormLabel>
+                  <Select value={qualidade} onChange={(e) => setQualidade(e.target.value as 'tipo2' | 'tipo4' | 'tipo6' | 'tipo8')}>
+                    <option value="tipo2">Tipo 2 (+R$ 150)</option>
+                    <option value="tipo4">Tipo 4 (+R$ 100)</option>
+                    <option value="tipo6">Tipo 6 (Base)</option>
+                    <option value="tipo8">Tipo 8 (-R$ 100)</option>
+                  </Select>
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Canal de Venda</FormLabel>
+                  <Select value={canal} onChange={(e) => setCanal(e.target.value as 'cooperativa' | 'corretor' | 'direto')}>
+                    <option value="cooperativa">Cooperativa (0,5%)</option>
+                    <option value="corretor">Corretor (1,0%)</option>
+                    <option value="direto">Venda Direta (0%)</option>
+                  </Select>
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Hedge (% da produção): {hedge}%</FormLabel>
+                  <Slider value={hedge} onChange={setHedge} min={0} max={100} step={5}>
+                    <SliderTrack>
+                      <SliderFilledTrack />
+                    </SliderTrack>
+                    <SliderThumb />
+                  </Slider>
+                </FormControl>
+              </VStack>
+
+              {/* Resultados */}
+              <VStack spacing={4} align="stretch">
+                <Alert status="info">
+                  <AlertIcon />
+                  <Box>
+                    <AlertTitle>Resultado da Simulação</AlertTitle>
+                  </Box>
+                </Alert>
+
+                <SimpleGrid columns={1} spacing={4}>
+                  <Stat>
+                    <StatLabel>Preço por Saca (60kg)</StatLabel>
+                    <StatNumber>R$ {resultado.precoUnitario.toFixed(2)}</StatNumber>
+                  </Stat>
+
+                  <Stat>
+                    <StatLabel>Comissão</StatLabel>
+                    <StatNumber color="red.500">-R$ {resultado.comissao.toFixed(2)}</StatNumber>
+                  </Stat>
+
+                  <Stat>
+                    <StatLabel>Preço Líquido</StatLabel>
+                    <StatNumber color="green.500">R$ {resultado.precoLiquido.toFixed(2)}</StatNumber>
+                  </Stat>
+
+                  <Divider />
+
+                  <Stat>
+                    <StatLabel>Valor Total ({(quantidade/60).toFixed(1)} sacas)</StatLabel>
+                    <StatNumber fontSize="2xl" color="blue.500">
+                      R$ {resultado.valorTotal.toFixed(2)}
+                    </StatNumber>
+                  </Stat>
+
+                  <Stat>
+                    <StatLabel>Valor com Hedge ({hedge}%)</StatLabel>
+                    <StatNumber color="purple.500">R$ {resultado.hedgeValor.toFixed(2)}</StatNumber>
+                  </Stat>
+                </SimpleGrid>
+              </VStack>
+            </Grid>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onClose}>
+              Fechar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 };

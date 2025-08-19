@@ -1,8 +1,10 @@
 import React from 'react';
 import { Box, Heading, SimpleGrid, VStack, Text, Button, List, ListItem } from '@chakra-ui/react';
 import { Card } from '../components/ui/BaseComponents';
+import { useThemeContext } from '../contexts/ThemeContext';
 
 const Pricing: React.FC = () => {
+  const { currentTheme } = useThemeContext();
   const plans = [
     {
       name: 'Básico',
@@ -53,10 +55,10 @@ const Pricing: React.FC = () => {
   return (
     <VStack spacing={8}>
       <Box textAlign="center">
-        <Heading as="h1" size="xl" mb={4}>
+        <Heading as="h1" size="xl" mb={4} color={currentTheme.colors.text.primary}>
           Escolha seu Plano
         </Heading>
-        <Text color="gray.600">
+        <Text color={currentTheme.colors.text.secondary}>
           Planos flexíveis para atender produtores de todos os tamanhos
         </Text>
       </Box>
@@ -66,11 +68,12 @@ const Pricing: React.FC = () => {
           <Card 
             key={index}
             aria-label={`Plano ${plan.name}`}
-            style={{ 
+            style={{
               padding: '32px',
               border: plan.recommended ? '2px solid' : '1px solid',
-              borderColor: plan.recommended ? 'green.500' : 'gray.200',
-              position: 'relative'
+              borderColor: plan.recommended ? currentTheme.colors.primary : currentTheme.colors.border.primary,
+              position: 'relative',
+              backgroundColor: currentTheme.colors.background.primary
             }}
           >
             {plan.recommended && (
@@ -79,8 +82,8 @@ const Pricing: React.FC = () => {
                 top="-12px" 
                 left="50%" 
                 transform="translateX(-50%)"
-                bg="green.500"
-                color="white"
+                bg={currentTheme.colors.primary}
+                color={currentTheme.colors.text.inverse}
                 px={3}
                 py={1}
                 borderRadius="full"
@@ -92,12 +95,12 @@ const Pricing: React.FC = () => {
             
             <VStack spacing={6}>
               <Box textAlign="center">
-                <Heading as="h3" size="lg" mb={2}>
+                <Heading as="h3" size="lg" mb={2} color={currentTheme.colors.text.primary}>
                   {plan.name}
                 </Heading>
-                <Text fontSize="3xl" fontWeight="bold">
+                <Text fontSize="3xl" fontWeight="bold" color={currentTheme.colors.text.primary}>
                   {plan.price}
-                  <Text as="span" fontSize="lg" color="gray.600">
+                  <Text as="span" fontSize="lg" color={currentTheme.colors.text.secondary}>
                     {plan.period}
                   </Text>
                 </Text>
@@ -106,15 +109,21 @@ const Pricing: React.FC = () => {
               <List spacing={2} textAlign="left" w="full">
                 {plan.features.map((feature, idx) => (
                   <ListItem key={idx}>
-                    <Text>✓ {feature}</Text>
+                    <Text color={currentTheme.colors.text.primary}>✓ {feature}</Text>
                   </ListItem>
                 ))}
               </List>
 
-              <Button 
-                colorScheme={plan.recommended ? 'green' : 'gray'}
-                variant={plan.recommended ? 'solid' : 'outline'}
+              <Button
                 w="full"
+                bg={plan.recommended ? currentTheme.colors.primary : 'transparent'}
+                color={plan.recommended ? currentTheme.colors.text.inverse : currentTheme.colors.text.primary}
+                borderColor={plan.recommended ? currentTheme.colors.primary : currentTheme.colors.border.primary}
+                border={plan.recommended ? 'none' : '1px solid'}
+                _hover={{
+                  bg: plan.recommended ? currentTheme.colors.secondary : currentTheme.colors.background.secondary,
+                  borderColor: plan.recommended ? currentTheme.colors.secondary : currentTheme.colors.primary
+                }}
               >
                 {plan.name === 'Enterprise' ? 'Contatar Vendas' : 'Começar Agora'}
               </Button>

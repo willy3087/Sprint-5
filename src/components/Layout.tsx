@@ -1,6 +1,7 @@
 import React from 'react';
-import { Box, Flex, Link, Spacer, Button, useColorModeValue } from '@chakra-ui/react';
+import { Box, Flex, Link, Spacer, Button } from '@chakra-ui/react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { ThemeSelector, useThemeContext } from '../contexts/ThemeContext';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -8,10 +9,11 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navigate = useNavigate();
+  const { currentTheme } = useThemeContext();
 
   return (
-    <Box minH="100vh" bg={useColorModeValue('gray.50', 'gray.900')}>
-      <Flex as="header" bg="darkBrown.900" color="white" px={4} h="56px" align="center">
+    <Box minH="100vh" bg={currentTheme.colors.background.primary}>
+      <Flex as="header" bg={currentTheme.colors.primary} color="white" px={4} h="56px" align="center">
         <Link as={RouterLink} to="/" fontSize="lg" fontWeight="bold" _hover={{ textDecoration: 'none' }}>
           GlobalCoffee
         </Link>
@@ -35,17 +37,18 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <Link as={RouterLink} to="/pricing" fontSize="sm" _hover={{ textDecoration: 'underline' }}>
             Preços
           </Link>
+          <ThemeSelector />
           <Button size="sm" h="32px" colorScheme="whiteAlpha" onClick={() => navigate('/login')}>
             Login
           </Button>
         </Flex>
       </Flex>
       
-      <Box as="main">
+      <Box as="main" bg={currentTheme.colors.background.secondary}>
         {children}
       </Box>
       
-      <Box as="footer" bg="gray.100" p={4} textAlign="center" mt="auto">
+      <Box as="footer" bg={currentTheme.colors.secondary} color="white" p={4} textAlign="center" mt="auto">
         <p>© 2024 GlobalCoffee. Todos os direitos reservados.</p>
       </Box>
     </Box>

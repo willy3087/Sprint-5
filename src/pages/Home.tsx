@@ -18,11 +18,11 @@ import {
   Spacer,
   Icon,
   Divider,
-  useColorModeValue,
   Image,
   Avatar,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
+import { useThemeContext } from '../contexts/ThemeContext';
 import {
   DollarSign,
   Thermometer,
@@ -43,8 +43,7 @@ const Home: React.FC = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('todas');
-  const bgCard = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('gray.200', 'gray.600');
+  const { currentTheme } = useThemeContext();
 
   // Stats data
   const stats = [
@@ -203,11 +202,11 @@ const Home: React.FC = () => {
       />
 
       {/* Quick Stats Bar */}
-      <Box 
-        bg={useColorModeValue('white', 'gray.800')} 
-        borderY="1px" 
-        borderColor={useColorModeValue('gray.200', 'gray.700')}
-        color={useColorModeValue('gray.800', 'white')} 
+      <Box
+        bg={currentTheme.colors.background.primary}
+        borderY="1px"
+        borderColor={currentTheme.colors.border.primary}
+        color={currentTheme.colors.text.primary}
         py={4}
         boxShadow="sm"
       >
@@ -215,23 +214,23 @@ const Home: React.FC = () => {
           <HStack spacing={8} overflowX="auto" justify="space-between">
             {stats.map((stat, index) => (
               <HStack key={index} spacing={3} minW="200px">
-                <Icon as={stat.icon} boxSize={6} color="coffee.500" />
+                <Icon as={stat.icon} boxSize={6} color={currentTheme.colors.primary} />
                 <VStack spacing={0} align="start">
                   <HStack spacing={1}>
-                    <Text fontWeight="bold" fontSize="lg">
+                    <Text fontWeight="bold" fontSize="lg" color={currentTheme.colors.text.primary}>
                       {stat.value}
                     </Text>
-                    <Text fontSize="xs" color={useColorModeValue('gray.500', 'gray.400')}>
+                    <Text fontSize="xs" color={currentTheme.colors.text.secondary}>
                       {stat.subValue}
                     </Text>
                   </HStack>
                   <HStack spacing={1}>
-                    <Text fontSize="xs" color={useColorModeValue('gray.600', 'gray.400')}>
+                    <Text fontSize="xs" color={currentTheme.colors.text.secondary}>
                       {stat.label}
                     </Text>
                     {stat.change !== 0 && stat.trend !== 'neutral' && (
                       <>
-                        <Text fontSize="xs" color={stat.trend === 'increase' ? 'green.400' : 'red.400'}>
+                        <Text fontSize="xs" color={stat.trend === 'increase' ? currentTheme.colors.status.success : currentTheme.colors.status.error}>
                           {stat.trend === 'increase' ? '↗' : '↘'} {Math.abs(stat.change)}%
                         </Text>
                       </>
@@ -250,44 +249,44 @@ const Home: React.FC = () => {
           {/* News Section */}
           <GridItem>
             {/* Section Header */}
-            <Card bg={bgCard} borderWidth={1} borderColor={borderColor} mb={6}>
+            <Card bg={currentTheme.colors.background.primary} borderWidth={1} borderColor={currentTheme.colors.border.primary} mb={6}>
               <CardBody>
                 <Flex align="center" mb={4}>
                   <HStack spacing={3}>
-                    <Icon as={MessageCircle} color="coffee.500" boxSize={6} />
-                    <Heading size="lg">Notícias e Atualizações</Heading>
+                    <Icon as={MessageCircle} color={currentTheme.colors.primary} boxSize={6} />
+                    <Heading size="lg" color={currentTheme.colors.text.primary}>Notícias e Atualizações</Heading>
                   </HStack>
                   <Spacer />
                   <ButtonGroup size="sm" variant="outline">
                     <Button
                       onClick={() => setActiveTab('todas')}
-                      bg={activeTab === 'todas' ? 'coffee.500' : 'transparent'}
-                      color={activeTab === 'todas' ? 'white' : 'gray.700'}
-                      borderColor="coffee.500"
+                      bg={activeTab === 'todas' ? currentTheme.colors.primary : 'transparent'}
+                      color={activeTab === 'todas' ? 'white' : currentTheme.colors.text.primary}
+                      borderColor={currentTheme.colors.primary}
                     >
                       Todas
                     </Button>
                     <Button
                       onClick={() => setActiveTab('mercado')}
-                      bg={activeTab === 'mercado' ? 'coffee.500' : 'transparent'}
-                      color={activeTab === 'mercado' ? 'white' : 'gray.700'}
-                      borderColor="coffee.500"
+                      bg={activeTab === 'mercado' ? currentTheme.colors.primary : 'transparent'}
+                      color={activeTab === 'mercado' ? 'white' : currentTheme.colors.text.primary}
+                      borderColor={currentTheme.colors.primary}
                     >
                       Mercado
                     </Button>
                     <Button
                       onClick={() => setActiveTab('clima')}
-                      bg={activeTab === 'clima' ? 'coffee.500' : 'transparent'}
-                      color={activeTab === 'clima' ? 'white' : 'gray.700'}
-                      borderColor="coffee.500"
+                      bg={activeTab === 'clima' ? currentTheme.colors.primary : 'transparent'}
+                      color={activeTab === 'clima' ? 'white' : currentTheme.colors.text.primary}
+                      borderColor={currentTheme.colors.primary}
                     >
                       Clima
                     </Button>
                     <Button
                       onClick={() => setActiveTab('tecnologia')}
-                      bg={activeTab === 'tecnologia' ? 'coffee.500' : 'transparent'}
-                      color={activeTab === 'tecnologia' ? 'white' : 'gray.700'}
-                      borderColor="coffee.500"
+                      bg={activeTab === 'tecnologia' ? currentTheme.colors.primary : 'transparent'}
+                      color={activeTab === 'tecnologia' ? 'white' : currentTheme.colors.text.primary}
+                      borderColor={currentTheme.colors.primary}
                     >
                       Tecnologia
                     </Button>
@@ -299,9 +298,9 @@ const Home: React.FC = () => {
                   {/* Main Featured */}
                   <GridItem>
                     <Card
-                      bg={bgCard}
+                      bg={currentTheme.colors.background.primary}
                       borderWidth={1}
-                      borderColor={borderColor}
+                      borderColor={currentTheme.colors.border.primary}
                       overflow="hidden"
                       cursor="pointer"
                       _hover={{ transform: 'translateY(-4px)', boxShadow: 'lg' }}
@@ -317,17 +316,17 @@ const Home: React.FC = () => {
                         />
                       </Box>
                       <CardBody>
-                        <Badge colorScheme="red" mb={2}>
+                        <Badge bg={currentTheme.colors.status.error} color="white" mb={2}>
                           {featuredNews.main.category}
                         </Badge>
-                        <Heading size="md" mb={2}>
+                        <Heading size="md" mb={2} color={currentTheme.colors.text.primary}>
                           {featuredNews.main.title}
                         </Heading>
-                        <Text color="gray.600" mb={3}>
+                        <Text color={currentTheme.colors.text.secondary} mb={3}>
                           {featuredNews.main.excerpt}
                         </Text>
                         <Flex justify="space-between" align="center">
-                          <HStack spacing={3} fontSize="sm" color="gray.500">
+                          <HStack spacing={3} fontSize="sm" color={currentTheme.colors.text.secondary}>
                             <HStack>
                               <Avatar size="xs" name={featuredNews.main.author} />
                               <Text>{featuredNews.main.author}</Text>
@@ -337,7 +336,7 @@ const Home: React.FC = () => {
                               <Text>{featuredNews.main.date}</Text>
                             </HStack>
                           </HStack>
-                          <HStack spacing={2} fontSize="sm" color="gray.500">
+                          <HStack spacing={2} fontSize="sm" color={currentTheme.colors.text.secondary}>
                             <HStack>
                               <Icon as={Eye} boxSize={3} />
                               <Text>{featuredNews.main.views}</Text>
@@ -358,9 +357,9 @@ const Home: React.FC = () => {
                       {featuredNews.secondary.map((news) => (
                         <Card
                           key={news.id}
-                          bg={bgCard}
+                          bg={currentTheme.colors.background.primary}
                           borderWidth={1}
-                          borderColor={borderColor}
+                          borderColor={currentTheme.colors.border.primary}
                           overflow="hidden"
                           cursor="pointer"
                           _hover={{ transform: 'translateY(-2px)', boxShadow: 'md' }}
@@ -376,16 +375,16 @@ const Home: React.FC = () => {
                             />
                           </Box>
                           <CardBody p={3}>
-                            <Badge colorScheme="blue" mb={2} fontSize="xs">
+                            <Badge bg={currentTheme.colors.status.info} color="white" mb={2} fontSize="xs">
                               {news.category}
                             </Badge>
-                            <Heading size="sm" mb={1}>
+                            <Heading size="sm" mb={1} color={currentTheme.colors.text.primary}>
                               {news.title}
                             </Heading>
-                            <Text fontSize="xs" color="gray.600" mb={2}>
+                            <Text fontSize="xs" color={currentTheme.colors.text.secondary} mb={2}>
                               {news.excerpt}
                             </Text>
-                            <HStack justify="space-between" fontSize="xs" color="gray.500">
+                            <HStack justify="space-between" fontSize="xs" color={currentTheme.colors.text.secondary}>
                               <HStack>
                                 <Icon as={Clock} boxSize={3} />
                                 <Text>{news.date}</Text>
@@ -407,9 +406,9 @@ const Home: React.FC = () => {
                   {newsList.map((news) => (
                     <Card
                       key={news.id}
-                      bg={bgCard}
+                      bg={currentTheme.colors.background.primary}
                       borderWidth={1}
-                      borderColor={borderColor}
+                      borderColor={currentTheme.colors.border.primary}
                       cursor="pointer"
                       _hover={{ boxShadow: 'md' }}
                       transition="all 0.3s"
@@ -428,21 +427,21 @@ const Home: React.FC = () => {
                           </Box>
                           <Box flex={1}>
                             <Flex justify="space-between" align="start" mb={2}>
-                              <Badge colorScheme="green" fontSize="xs">
+                              <Badge bg={currentTheme.colors.status.success} color="white" fontSize="xs">
                                 {news.category}
                               </Badge>
                               <HStack spacing={2}>
-                                <Icon as={Bookmark} boxSize={4} cursor="pointer" />
-                                <Icon as={Share2} boxSize={4} cursor="pointer" />
+                                <Icon as={Bookmark} boxSize={4} cursor="pointer" color={currentTheme.colors.text.secondary} />
+                                <Icon as={Share2} boxSize={4} cursor="pointer" color={currentTheme.colors.text.secondary} />
                               </HStack>
                             </Flex>
-                            <Heading size="sm" mb={1}>
+                            <Heading size="sm" mb={1} color={currentTheme.colors.text.primary}>
                               {news.title}
                             </Heading>
-                            <Text fontSize="sm" color="gray.600" mb={2}>
+                            <Text fontSize="sm" color={currentTheme.colors.text.secondary} mb={2}>
                               {news.excerpt}
                             </Text>
-                            <HStack fontSize="xs" color="gray.500" spacing={4}>
+                            <HStack fontSize="xs" color={currentTheme.colors.text.secondary} spacing={4}>
                               <HStack>
                                 <Icon as={Clock} boxSize={3} />
                                 <Text>{news.date}</Text>
@@ -464,9 +463,9 @@ const Home: React.FC = () => {
                   <Button
                     size="lg"
                     variant="outline"
-                    borderColor="coffee.500"
-                    color="coffee.500"
-                    _hover={{ bg: 'coffee.500', color: 'white' }}
+                    borderColor={currentTheme.colors.primary}
+                    color={currentTheme.colors.primary}
+                    _hover={{ bg: currentTheme.colors.primary, color: 'white' }}
                   >
                     Carregar mais notícias
                   </Button>
@@ -479,24 +478,25 @@ const Home: React.FC = () => {
           <GridItem>
             <VStack spacing={6} position="sticky" top="20px">
               {/* Market Indicators */}
-              <Card bg={bgCard} borderWidth={1} borderColor={borderColor} w="100%">
+              <Card bg={currentTheme.colors.background.primary} borderWidth={1} borderColor={currentTheme.colors.border.primary} w="100%">
                 <CardHeader pb={2}>
                   <HStack spacing={2}>
-                    <Icon as={TrendingUp} color="coffee.500" boxSize={5} />
-                    <Heading size="md">Indicadores de Mercado</Heading>
+                    <Icon as={TrendingUp} color={currentTheme.colors.primary} boxSize={5} />
+                    <Heading size="md" color={currentTheme.colors.text.primary}>Indicadores de Mercado</Heading>
                   </HStack>
                 </CardHeader>
                 <CardBody pt={2}>
                   <VStack spacing={3} align="stretch">
                     {marketIndicators.map((indicator, index) => (
                       <Flex key={index} justify="space-between" align="center">
-                        <Text fontSize="sm">{indicator.label}</Text>
+                        <Text fontSize="sm" color={currentTheme.colors.text.primary}>{indicator.label}</Text>
                         <HStack>
-                          <Text fontWeight="bold" fontSize="sm">
+                          <Text fontWeight="bold" fontSize="sm" color={currentTheme.colors.text.primary}>
                             {indicator.value}
                           </Text>
                           <Badge
-                            colorScheme={indicator.change > 0 ? 'green' : 'red'}
+                            bg={indicator.change > 0 ? currentTheme.colors.status.success : currentTheme.colors.status.error}
+                            color="white"
                             fontSize="xs"
                           >
                             {indicator.change > 0 ? '+' : ''}{indicator.change}%
@@ -509,7 +509,9 @@ const Home: React.FC = () => {
                     mt={4}
                     size="sm"
                     w="100%"
-                    colorScheme="coffee"
+                    bg={currentTheme.colors.primary}
+                    color="white"
+                    _hover={{ bg: currentTheme.colors.secondary }}
                     onClick={() => navigate('/dashboard')}
                   >
                     Ver Dashboard Completo
@@ -518,11 +520,11 @@ const Home: React.FC = () => {
               </Card>
 
               {/* Quick Links */}
-              <Card bg={bgCard} borderWidth={1} borderColor={borderColor} w="100%">
+              <Card bg={currentTheme.colors.background.primary} borderWidth={1} borderColor={currentTheme.colors.border.primary} w="100%">
                 <CardHeader pb={2}>
                   <HStack spacing={2}>
-                    <Icon as={Activity} color="coffee.500" boxSize={5} />
-                    <Heading size="md">Acesso Rápido</Heading>
+                    <Icon as={Activity} color={currentTheme.colors.primary} boxSize={5} />
+                    <Heading size="md" color={currentTheme.colors.text.primary}>Acesso Rápido</Heading>
                   </HStack>
                 </CardHeader>
                 <CardBody pt={2}>
@@ -533,7 +535,9 @@ const Home: React.FC = () => {
                         size="sm"
                         variant="ghost"
                         justifyContent="start"
-                        leftIcon={<Icon as={link.icon} />}
+                        leftIcon={<Icon as={link.icon} color={currentTheme.colors.primary} />}
+                        color={currentTheme.colors.text.primary}
+                        _hover={{ bg: currentTheme.colors.background.secondary }}
                       >
                         {link.label}
                       </Button>
@@ -543,11 +547,11 @@ const Home: React.FC = () => {
               </Card>
 
               {/* Upcoming Events */}
-              <Card bg={bgCard} borderWidth={1} borderColor={borderColor} w="100%">
+              <Card bg={currentTheme.colors.background.primary} borderWidth={1} borderColor={currentTheme.colors.border.primary} w="100%">
                 <CardHeader pb={2}>
                   <HStack spacing={2}>
-                    <Icon as={Calendar} color="coffee.500" boxSize={5} />
-                    <Heading size="md">Próximos Eventos</Heading>
+                    <Icon as={Calendar} color={currentTheme.colors.primary} boxSize={5} />
+                    <Heading size="md" color={currentTheme.colors.text.primary}>Próximos Eventos</Heading>
                   </HStack>
                 </CardHeader>
                 <CardBody pt={2}>
@@ -555,40 +559,54 @@ const Home: React.FC = () => {
                     {upcomingEvents.map((event, index) => (
                       <Box key={index}>
                         <HStack justify="space-between" mb={1}>
-                          <Badge colorScheme="purple" fontSize="xs">
+                          <Badge bg={currentTheme.colors.accent} color="white" fontSize="xs">
                             {event.date}
                           </Badge>
-                          <Text fontSize="xs" color="gray.500">
+                          <Text fontSize="xs" color={currentTheme.colors.text.secondary}>
                             {event.location}
                           </Text>
                         </HStack>
-                        <Text fontSize="sm" fontWeight="medium">
+                        <Text fontSize="sm" fontWeight="medium" color={currentTheme.colors.text.primary}>
                           {event.title}
                         </Text>
                         {index < upcomingEvents.length - 1 && <Divider mt={3} />}
                       </Box>
                     ))}
                   </VStack>
-                  <Button mt={4} size="sm" w="100%" variant="outline">
+                  <Button
+                    mt={4}
+                    size="sm"
+                    w="100%"
+                    variant="outline"
+                    borderColor={currentTheme.colors.primary}
+                    color={currentTheme.colors.primary}
+                    _hover={{ bg: currentTheme.colors.primary, color: 'white' }}
+                  >
                     Ver todos os eventos
                   </Button>
                 </CardBody>
               </Card>
 
               {/* Newsletter */}
-              <Card bg="coffee.50" borderWidth={2} borderColor="coffee.200" w="100%">
+              <Card bg={currentTheme.colors.background.secondary} borderWidth={2} borderColor={currentTheme.colors.border.focus} w="100%">
                 <CardBody>
                   <VStack spacing={3}>
                     <HStack spacing={2}>
-                      <Icon as={Bookmark} color="coffee.600" boxSize={5} />
-                      <Text fontSize="lg" fontWeight="bold" color="coffee.700">
+                      <Icon as={Bookmark} color={currentTheme.colors.primary} boxSize={5} />
+                      <Text fontSize="lg" fontWeight="bold" color={currentTheme.colors.primary}>
                         Newsletter Diária
                       </Text>
                     </HStack>
-                    <Text fontSize="sm" textAlign="center" color="coffee.600">
+                    <Text fontSize="sm" textAlign="center" color={currentTheme.colors.text.primary}>
                       Receba as principais notícias do mercado cafeeiro
                     </Text>
-                    <Button size="sm" colorScheme="coffee" w="100%">
+                    <Button
+                      size="sm"
+                      bg={currentTheme.colors.primary}
+                      color="white"
+                      _hover={{ bg: currentTheme.colors.secondary }}
+                      w="100%"
+                    >
                       Inscrever-se
                     </Button>
                   </VStack>

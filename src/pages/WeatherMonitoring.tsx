@@ -24,9 +24,9 @@ import {
   Icon,
   Flex,
   Spacer,
-  useColorModeValue,
   Divider,
 } from '@chakra-ui/react';
+import { useThemeContext } from '../contexts/ThemeContext';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { Line, Bar } from 'react-chartjs-2';
 import {
@@ -69,9 +69,10 @@ L.Icon.Default.mergeOptions({
 });
 
 const WeatherMonitoring: React.FC = () => {
+  const { currentTheme } = useThemeContext();
   const [selectedLayer, setSelectedLayer] = useState('temperature');
-  const bgCard = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('gray.200', 'gray.600');
+  const bgCard = currentTheme.colors.background.primary;
+  const borderColor = currentTheme.colors.border.primary;
 
   // Map center - Brazil coffee regions
   const mapCenter = { lat: -15.7801, lng: -47.9292 };
@@ -104,15 +105,15 @@ const WeatherMonitoring: React.FC = () => {
     { day: 'Sex', icon: '⛈️', temp: '22°C', condition: 'Tempestade' },
   ];
 
-  // Chart data
+  // Chart data using theme colors
   const temperatureData = {
     labels: ['6h', '9h', '12h', '15h', '18h', '21h'],
     datasets: [
       {
         label: 'Temperatura (°C)',
         data: [18, 21, 26, 28, 24, 20],
-        borderColor: '#8B4513',
-        backgroundColor: 'rgba(139, 69, 19, 0.1)',
+        borderColor: currentTheme.colors.primary,
+        backgroundColor: currentTheme.colors.primary + '20',
         tension: 0.4,
         fill: true,
       },
@@ -125,8 +126,8 @@ const WeatherMonitoring: React.FC = () => {
       {
         label: 'Precipitação (mm)',
         data: [12, 18, 8, 25, 15, 10, 20],
-        backgroundColor: 'rgba(139, 69, 19, 0.7)',
-        borderColor: '#8B4513',
+        backgroundColor: currentTheme.colors.secondary + 'CC',
+        borderColor: currentTheme.colors.secondary,
         borderWidth: 1,
       },
     ],
@@ -183,18 +184,18 @@ const WeatherMonitoring: React.FC = () => {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'Alta':
-        return 'red';
+        return currentTheme.colors.status.error;
       case 'Média':
-        return 'orange';
+        return currentTheme.colors.status.warning;
       case 'Baixa':
-        return 'green';
+        return currentTheme.colors.status.success;
       default:
-        return 'gray';
+        return currentTheme.colors.text.secondary;
     }
   };
 
   return (
-    <Box>
+    <Box bg={currentTheme.colors.background.secondary} minH="100vh">
       <PageHeader 
         title="Previsão Climática" 
         subtitle="Monitoramento em tempo real das condições climáticas nas regiões produtoras"
@@ -208,11 +209,17 @@ const WeatherMonitoring: React.FC = () => {
           <GridItem>
             {/* Weather Map Section */}
             <Card bg={bgCard} borderWidth={1} borderColor={borderColor} mb={8}>
-              <CardHeader>
+              <CardHeader bg={currentTheme.colors.background.tertiary}>
                 <Flex align="center">
-                  <Heading size="md">KPIs Climáticos - Regiões Produtoras de Café</Heading>
+                  <Heading size="md" color={currentTheme.colors.text.primary}>KPIs Climáticos - Regiões Produtoras de Café</Heading>
                   <Spacer />
-                  <Select w="200px" size="sm">
+                  <Select
+                    w="200px"
+                    size="sm"
+                    bg={currentTheme.colors.background.primary}
+                    borderColor={currentTheme.colors.border.primary}
+                    color={currentTheme.colors.text.primary}
+                  >
                     <option value="brasil">Brasil - Todas as Regiões</option>
                     <option value="mg">Minas Gerais</option>
                     <option value="sp">São Paulo</option>
@@ -228,9 +235,12 @@ const WeatherMonitoring: React.FC = () => {
                     <Button
                       key={layer.id}
                       leftIcon={<Icon as={layer.icon} />}
-                      bg={selectedLayer === layer.id ? 'coffee.500' : 'transparent'}
-                      color={selectedLayer === layer.id ? 'white' : 'gray.700'}
-                      _hover={{ bg: selectedLayer === layer.id ? 'coffee.600' : 'gray.100' }}
+                      bg={selectedLayer === layer.id ? currentTheme.colors.primary : 'transparent'}
+                      color={selectedLayer === layer.id ? currentTheme.colors.text.inverse : currentTheme.colors.text.primary}
+                      borderColor={currentTheme.colors.border.primary}
+                      _hover={{
+                        bg: selectedLayer === layer.id ? currentTheme.colors.secondary : currentTheme.colors.background.tertiary
+                      }}
                       onClick={() => setSelectedLayer(layer.id)}
                     >
                       {layer.label}
@@ -267,12 +277,15 @@ const WeatherMonitoring: React.FC = () => {
                     <Card key={index} bg={bgCard} borderWidth={1} borderColor={borderColor}>
                       <CardBody>
                         <Stat textAlign="center">
-                          <Icon as={kpi.icon} boxSize={8} color="coffee.500" mb={2} />
-                          <StatNumber fontSize="2xl">{kpi.value}</StatNumber>
-                          <StatLabel color="gray.600">{kpi.label}</StatLabel>
-                          <StatHelpText>
+                          <Icon as={kpi.icon} boxSize={8} color={currentTheme.colors.accent} mb={2} />
+                          <StatNumber fontSize="2xl" color={currentTheme.colors.text.primary}>{kpi.value}</StatNumber>
+                          <StatLabel color={currentTheme.colors.text.secondary}>{kpi.label}</StatLabel>
+                          <StatHelpText color={currentTheme.colors.text.secondary}>
                             {kpi.type !== 'neutral' && (
-                              <StatArrow type={kpi.type as 'increase' | 'decrease'} />
+                              <StatArrow
+                                type={kpi.type as 'increase' | 'decrease'}
+                                color={kpi.type === 'increase' ? currentTheme.colors.status.success : currentTheme.colors.status.error}
+                              />
                             )}
                             {kpi.change}
                           </StatHelpText>
@@ -286,18 +299,24 @@ const WeatherMonitoring: React.FC = () => {
 
             {/* Weather Forecast Cards */}
             <Card bg={bgCard} borderWidth={1} borderColor={borderColor} mb={8}>
-              <CardHeader>
-                <Heading size="md">Previsão de 5 Dias</Heading>
+              <CardHeader bg={currentTheme.colors.background.tertiary}>
+                <Heading size="md" color={currentTheme.colors.text.primary}>Previsão de 5 Dias</Heading>
               </CardHeader>
               <CardBody>
                 <HStack spacing={4} overflowX="auto">
                   {forecast.map((day, index) => (
-                    <Card key={index} minW="150px" bg="gray.50" borderWidth={1} borderColor={borderColor}>
+                    <Card
+                      key={index}
+                      minW="150px"
+                      bg={currentTheme.colors.background.secondary}
+                      borderWidth={1}
+                      borderColor={borderColor}
+                    >
                       <CardBody textAlign="center">
-                        <Text fontWeight="bold" mb={2}>{day.day}</Text>
+                        <Text fontWeight="bold" mb={2} color={currentTheme.colors.text.primary}>{day.day}</Text>
                         <Text fontSize="3xl" mb={2}>{day.icon}</Text>
-                        <Text fontSize="xl" fontWeight="bold">{day.temp}</Text>
-                        <Text fontSize="sm" color="gray.600">{day.condition}</Text>
+                        <Text fontSize="xl" fontWeight="bold" color={currentTheme.colors.text.primary}>{day.temp}</Text>
+                        <Text fontSize="sm" color={currentTheme.colors.text.secondary}>{day.condition}</Text>
                       </CardBody>
                     </Card>
                   ))}
@@ -308,8 +327,8 @@ const WeatherMonitoring: React.FC = () => {
             {/* Charts Section */}
             <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={6}>
               <Card bg={bgCard} borderWidth={1} borderColor={borderColor}>
-                <CardHeader>
-                  <Heading size="md">Temperatura Média</Heading>
+                <CardHeader bg={currentTheme.colors.background.tertiary}>
+                  <Heading size="md" color={currentTheme.colors.text.primary}>Temperatura Média</Heading>
                 </CardHeader>
                 <CardBody>
                   <Box h="250px">
@@ -319,8 +338,8 @@ const WeatherMonitoring: React.FC = () => {
               </Card>
 
               <Card bg={bgCard} borderWidth={1} borderColor={borderColor}>
-                <CardHeader>
-                  <Heading size="md">Precipitação Acumulada</Heading>
+                <CardHeader bg={currentTheme.colors.background.tertiary}>
+                  <Heading size="md" color={currentTheme.colors.text.primary}>Precipitação Acumulada</Heading>
                 </CardHeader>
                 <CardBody>
                   <Box h="250px">
@@ -330,8 +349,8 @@ const WeatherMonitoring: React.FC = () => {
               </Card>
 
               <Card bg={bgCard} borderWidth={1} borderColor={borderColor}>
-                <CardHeader>
-                  <Heading size="md">Umidade do Solo</Heading>
+                <CardHeader bg={currentTheme.colors.background.tertiary}>
+                  <Heading size="md" color={currentTheme.colors.text.primary}>Umidade do Solo</Heading>
                 </CardHeader>
                 <CardBody>
                   <Box h="250px">
@@ -342,8 +361,8 @@ const WeatherMonitoring: React.FC = () => {
                           {
                             label: 'Umidade (%)',
                             data: [75, 72, 68, 65, 70, 73],
-                            borderColor: '#800020',
-                            backgroundColor: 'rgba(128, 0, 32, 0.1)',
+                            borderColor: currentTheme.colors.accent,
+                            backgroundColor: currentTheme.colors.accent + '20',
                             tension: 0.4,
                             fill: true,
                           },
@@ -356,8 +375,8 @@ const WeatherMonitoring: React.FC = () => {
               </Card>
 
               <Card bg={bgCard} borderWidth={1} borderColor={borderColor}>
-                <CardHeader>
-                  <Heading size="md">Índice de Estresse Hídrico</Heading>
+                <CardHeader bg={currentTheme.colors.background.tertiary}>
+                  <Heading size="md" color={currentTheme.colors.text.primary}>Índice de Estresse Hídrico</Heading>
                 </CardHeader>
                 <CardBody>
                   <Box h="250px">
@@ -368,8 +387,8 @@ const WeatherMonitoring: React.FC = () => {
                           {
                             label: 'Índice',
                             data: [30, 45, 60, 40, 35, 50, 42],
-                            backgroundColor: 'rgba(255, 99, 71, 0.7)',
-                            borderColor: '#FF6347',
+                            backgroundColor: currentTheme.colors.status.warning + 'CC',
+                            borderColor: currentTheme.colors.status.warning,
                             borderWidth: 1,
                           },
                         ],
@@ -385,11 +404,17 @@ const WeatherMonitoring: React.FC = () => {
           {/* Sidebar */}
           <GridItem>
             <Card bg={bgCard} borderWidth={1} borderColor={borderColor} position="sticky" top={4}>
-              <CardHeader>
+              <CardHeader bg={currentTheme.colors.background.tertiary}>
                 <Flex align="center">
-                  <Heading size="md">Alertas Climáticos</Heading>
+                  <Heading size="md" color={currentTheme.colors.text.primary}>Alertas Climáticos</Heading>
                   <Spacer />
-                  <Button size="sm" variant="ghost" leftIcon={<Icon as={BsArrowRepeat} />}>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    leftIcon={<Icon as={BsArrowRepeat} />}
+                    color={currentTheme.colors.text.primary}
+                    _hover={{ bg: currentTheme.colors.background.secondary }}
+                  >
                     Atualizar
                   </Button>
                 </Flex>
@@ -398,18 +423,24 @@ const WeatherMonitoring: React.FC = () => {
                 <VStack spacing={4} align="stretch">
                   {alerts.map((alert, index) => (
                     <Box key={index}>
-                      <Card bg="gray.50" borderWidth={1} borderColor={borderColor}>
+                      <Card bg={currentTheme.colors.background.secondary} borderWidth={1} borderColor={borderColor}>
                         <CardBody>
                           <VStack align="stretch" spacing={2}>
-                            <Text fontWeight="bold">{alert.title}</Text>
-                            <Text fontSize="sm" color="gray.600">
+                            <Text fontWeight="bold" color={currentTheme.colors.text.primary}>{alert.title}</Text>
+                            <Text fontSize="sm" color={currentTheme.colors.text.secondary}>
                               {alert.description}
                             </Text>
                             <Flex justify="space-between" align="center">
-                              <Badge colorScheme={getPriorityColor(alert.priority)}>
+                              <Badge
+                                bg={getPriorityColor(alert.priority)}
+                                color={currentTheme.colors.text.inverse}
+                                px={2}
+                                py={1}
+                                borderRadius="md"
+                              >
                                 {alert.priority}
                               </Badge>
-                              <Text fontSize="xs" color="gray.500">
+                              <Text fontSize="xs" color={currentTheme.colors.text.secondary}>
                                 {alert.time}
                               </Text>
                             </Flex>

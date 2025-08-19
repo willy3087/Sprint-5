@@ -1,43 +1,50 @@
 import React, { useState } from 'react';
-import { 
-  Box, 
-  VStack, 
-  Heading, 
-  Input, 
-  Button, 
-  FormControl, 
-  FormLabel, 
-  Text, 
+import {
+  Box,
+  VStack,
+  Heading,
+  Input,
+  Button,
+  FormControl,
+  FormLabel,
+  Text,
   Link,
-  useToast 
+  useToast
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
+import { useThemeContext } from '../contexts/ThemeContext';
 
 const Login: React.FC = () => {
+  const { currentTheme } = useThemeContext();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const toast = useToast();
+  // Removido uso do contexto de autenticação
+
+  // Removido o uso do contexto de autenticação para manter validação hardcoded simples no front
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulação de login
+    // Validação hardcoded simples, sem autenticação real
     setTimeout(() => {
-      if (email && password) {
+      if (email === 'teste@teste.com.br' && password === 'teste@teste') {
         toast({
           title: 'Login realizado com sucesso!',
           status: 'success',
           duration: 3000,
           isClosable: true,
         });
-        navigate('/dashboard');
+        // Simula login setando flag localStorage para controle simples
+        localStorage.setItem('isLoggedIn', 'true');
+        navigate('/');
       } else {
         toast({
           title: 'Erro no login',
-          description: 'Por favor, preencha todos os campos.',
+          description: 'Email ou senha incorretos.',
           status: 'error',
           duration: 3000,
           isClosable: true,
@@ -51,15 +58,23 @@ const Login: React.FC = () => {
     <Box maxW="400px" mx="auto" py={10}>
       <VStack spacing={8}>
         <Box textAlign="center">
-          <Heading as="h1" size="xl" mb={2}>
+          <Heading as="h1" size="xl" mb={2} color={currentTheme.colors.text.primary}>
             Entrar no GlobalCoffee
           </Heading>
-          <Text color="gray.600">
+          <Text color={currentTheme.colors.text.secondary}>
             Acesse sua conta para gerenciar sua produção
           </Text>
         </Box>
 
-        <Box w="full" p={8} borderWidth={1} borderRadius="md" boxShadow="sm">
+        <Box
+          w="full"
+          p={8}
+          borderWidth={1}
+          borderRadius="md"
+          boxShadow="sm"
+          bg={currentTheme.colors.background.primary}
+          borderColor={currentTheme.colors.border.primary}
+        >
           <form onSubmit={handleSubmit}>
             <VStack spacing={4}>
               <FormControl isRequired>
@@ -84,7 +99,9 @@ const Login: React.FC = () => {
 
               <Button
                 type="submit"
-                colorScheme="green"
+                bg={currentTheme.colors.primary}
+                color="white"
+                _hover={{ bg: currentTheme.colors.secondary }}
                 w="full"
                 isLoading={isLoading}
                 loadingText="Entrando..."
@@ -95,12 +112,12 @@ const Login: React.FC = () => {
           </form>
 
           <VStack spacing={3} mt={6}>
-            <Link color="green.600" fontSize="sm">
+            <Link color={currentTheme.colors.primary} fontSize="sm">
               Esqueceu sua senha?
             </Link>
-            <Text fontSize="sm" color="gray.600">
+            <Text fontSize="sm" color={currentTheme.colors.text.secondary}>
               Não tem uma conta?{' '}
-              <Link color="green.600">
+              <Link color={currentTheme.colors.primary}>
                 Cadastre-se
               </Link>
             </Text>

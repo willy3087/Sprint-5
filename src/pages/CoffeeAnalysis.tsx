@@ -46,6 +46,7 @@ import {
   Legend,
 } from 'chart.js';
 import { Search } from 'react-feather';
+import { useThemeContext } from '../contexts/ThemeContext';
 
 ChartJS.register(
   RadialLinearScale,
@@ -66,6 +67,7 @@ interface CoffeeComponent {
 }
 
 const CoffeeAnalysis: React.FC = () => {
+  const { currentTheme } = useThemeContext();
   const [selectedSample, setSelectedSample] = useState('sample-1');
 
   // Dados de componentes do café
@@ -172,18 +174,18 @@ const CoffeeAnalysis: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'good': return 'green';
-      case 'warning': return 'yellow';
-      case 'critical': return 'red';
-      default: return 'gray';
+      case 'good': return currentTheme.colors.status.success;
+      case 'warning': return currentTheme.colors.status.warning;
+      case 'critical': return currentTheme.colors.status.error;
+      default: return currentTheme.colors.text.secondary;
     }
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 90) return 'green';
-    if (score >= 80) return 'blue';
-    if (score >= 70) return 'yellow';
-    return 'red';
+    if (score >= 90) return currentTheme.colors.status.success;
+    if (score >= 80) return currentTheme.colors.primary;
+    if (score >= 70) return currentTheme.colors.status.warning;
+    return currentTheme.colors.status.error;
   };
 
   return (
@@ -202,48 +204,94 @@ const CoffeeAnalysis: React.FC = () => {
                 value={selectedSample}
                 onChange={(e) => setSelectedSample(e.target.value)}
                 maxW="200px"
+                borderColor={currentTheme.colors.border.primary}
+                _focus={{ borderColor: currentTheme.colors.primary }}
               >
                 <option value="sample-1">Amostra #001</option>
                 <option value="sample-2">Amostra #002</option>
                 <option value="sample-3">Amostra #003</option>
               </Select>
-              <Button colorScheme="green">Nova Análise</Button>
+              <Button
+                bg={currentTheme.colors.primary}
+                color={currentTheme.colors.text.inverse}
+                _hover={{ bg: currentTheme.colors.secondary }}
+              >
+                Nova Análise
+              </Button>
             </HStack>
           </Flex>
 
           {/* Score Overview */}
-          <Card aria-label="Score geral" style={{ padding: '24px' }}>
+          <Card
+            aria-label="Score geral"
+            style={{
+              padding: '24px',
+              backgroundColor: currentTheme.colors.background.primary,
+              borderColor: currentTheme.colors.border.primary
+            }}
+          >
             <SimpleGrid columns={{ base: 1, md: 4 }} spacing={6}>
               <VStack>
-                <CircularProgress value={92} size="120px" color="green.400" thickness="12px">
-                  <CircularProgressLabel fontSize="24px" fontWeight="bold">92</CircularProgressLabel>
+                <CircularProgress
+                  value={92}
+                  size="120px"
+                  sx={{
+                    '& circle[stroke]': {
+                      stroke: currentTheme.colors.status.success
+                    }
+                  }}
+                  thickness="12px"
+                >
+                  <CircularProgressLabel
+                    fontSize="24px"
+                    fontWeight="bold"
+                    color={currentTheme.colors.text.primary}
+                  >
+                    92
+                  </CircularProgressLabel>
                 </CircularProgress>
-                <Text fontWeight="bold">Score Geral</Text>
-                <Badge colorScheme="green" fontSize="md">Excelente</Badge>
+                <Text fontWeight="bold" color={currentTheme.colors.text.primary}>Score Geral</Text>
+                <Badge
+                  bg={currentTheme.colors.status.success}
+                  color={currentTheme.colors.text.inverse}
+                  fontSize="md"
+                >
+                  Excelente
+                </Badge>
               </VStack>
               
               <Stat>
-                <StatLabel>Classificação SCA</StatLabel>
-                <StatNumber>Specialty Grade</StatNumber>
-                <StatHelpText>Score &gt; 80 pontos</StatHelpText>
+                <StatLabel color={currentTheme.colors.text.secondary}>Classificação SCA</StatLabel>
+                <StatNumber color={currentTheme.colors.text.primary}>Specialty Grade</StatNumber>
+                <StatHelpText color={currentTheme.colors.text.tertiary}>Score &gt; 80 pontos</StatHelpText>
               </Stat>
 
               <Stat>
-                <StatLabel>Tipo de Café</StatLabel>
-                <StatNumber>Arábica</StatNumber>
-                <StatHelpText>Bourbon Amarelo</StatHelpText>
+                <StatLabel color={currentTheme.colors.text.secondary}>Tipo de Café</StatLabel>
+                <StatNumber color={currentTheme.colors.text.primary}>Arábica</StatNumber>
+                <StatHelpText color={currentTheme.colors.text.tertiary}>Bourbon Amarelo</StatHelpText>
               </Stat>
 
               <Stat>
-                <StatLabel>Processo</StatLabel>
-                <StatNumber>Natural</StatNumber>
-                <StatHelpText>Secagem ao sol</StatHelpText>
+                <StatLabel color={currentTheme.colors.text.secondary}>Processo</StatLabel>
+                <StatNumber color={currentTheme.colors.text.primary}>Natural</StatNumber>
+                <StatHelpText color={currentTheme.colors.text.tertiary}>Secagem ao sol</StatHelpText>
               </Stat>
             </SimpleGrid>
           </Card>
 
           {/* Tabs for different analyses */}
-          <Tabs colorScheme="green">
+          <Tabs
+            sx={{
+              '& .chakra-tabs__tab[aria-selected=true]': {
+                color: currentTheme.colors.primary,
+                borderColor: currentTheme.colors.primary
+              },
+              '& .chakra-tabs__tab:hover': {
+                color: currentTheme.colors.secondary
+              }
+            }}
+          >
             <TabList>
               <Tab>Componentes Químicos</Tab>
               <Tab>Perfil Sensorial</Tab>
@@ -263,21 +311,25 @@ const CoffeeAnalysis: React.FC = () => {
                           <Flex justify="space-between" align="center" mb={2}>
                             <HStack>
                               <Text fontWeight="semibold">{component.name}</Text>
-                              <Badge colorScheme={getStatusColor(component.status)}>
+                              <Badge bg={getStatusColor(component.status)} color={currentTheme.colors.text.inverse}>
                                 {component.value}{component.unit}
                               </Badge>
                             </HStack>
-                            <Text fontSize="sm" color="gray.500">
+                            <Text fontSize="sm" color={currentTheme.colors.text.secondary}>
                               Ideal: {component.ideal}{component.unit}
                             </Text>
                           </Flex>
                           <Progress
                             value={(component.value / component.ideal) * 100}
-                            colorScheme={getStatusColor(component.status)}
                             size="sm"
                             borderRadius="full"
+                            sx={{
+                              '& > div[role="progressbar"]': {
+                                backgroundColor: getStatusColor(component.status)
+                              }
+                            }}
                           />
-                          <Text fontSize="xs" color="gray.600" mt={1}>
+                          <Text fontSize="xs" color={currentTheme.colors.text.tertiary} mt={1}>
                             {component.description}
                           </Text>
                         </Box>
@@ -310,33 +362,38 @@ const CoffeeAnalysis: React.FC = () => {
                       
                       <Box>
                         <Text fontWeight="semibold" mb={2}>Fragrância/Aroma</Text>
-                        <Text fontSize="sm" color="gray.600">
+                        <Text fontSize="sm" color={currentTheme.colors.text.secondary}>
                           Notas florais intensas com hints de chocolate e caramelo. 
                           Fragrância doce e complexa que remete a frutas vermelhas maduras.
                         </Text>
                       </Box>
 
-                      <Divider />
+                      <Divider borderColor={currentTheme.colors.border.primary} />
 
                       <Box>
                         <Text fontWeight="semibold" mb={2}>Sabor</Text>
-                        <Text fontSize="sm" color="gray.600">
+                        <Text fontSize="sm" color={currentTheme.colors.text.secondary}>
                           Sabor equilibrado com acidez cítrica brilhante. 
                           Notas de cacau, amendoim e finalização prolongada.
                         </Text>
                       </Box>
 
-                      <Divider />
+                      <Divider borderColor={currentTheme.colors.border.primary} />
 
                       <Box>
                         <Text fontWeight="semibold" mb={2}>Corpo</Text>
-                        <Text fontSize="sm" color="gray.600">
+                        <Text fontSize="sm" color={currentTheme.colors.text.secondary}>
                           Corpo médio a encorpado, textura cremosa e aveludada. 
                           Sensação na boca agradável e persistente.
                         </Text>
                       </Box>
 
-                      <Alert status="success" mt={4}>
+                      <Alert
+                        status="success"
+                        mt={4}
+                        bg={currentTheme.colors.status.success}
+                        color={currentTheme.colors.text.inverse}
+                      >
                         <AlertIcon />
                         Café aprovado para exportação premium
                       </Alert>
@@ -353,21 +410,21 @@ const CoffeeAnalysis: React.FC = () => {
                     
                     <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4}>
                       <Stat>
-                        <StatLabel>Defeitos Tipo 1</StatLabel>
-                        <StatNumber>0</StatNumber>
-                        <StatHelpText>Nenhum defeito grave</StatHelpText>
+                        <StatLabel color={currentTheme.colors.text.secondary}>Defeitos Tipo 1</StatLabel>
+                        <StatNumber color={currentTheme.colors.text.primary}>0</StatNumber>
+                        <StatHelpText color={currentTheme.colors.text.tertiary}>Nenhum defeito grave</StatHelpText>
                       </Stat>
                       
                       <Stat>
-                        <StatLabel>Defeitos Tipo 2</StatLabel>
-                        <StatNumber>3</StatNumber>
-                        <StatHelpText>Dentro do aceitável</StatHelpText>
+                        <StatLabel color={currentTheme.colors.text.secondary}>Defeitos Tipo 2</StatLabel>
+                        <StatNumber color={currentTheme.colors.text.primary}>3</StatNumber>
+                        <StatHelpText color={currentTheme.colors.text.tertiary}>Dentro do aceitável</StatHelpText>
                       </Stat>
                       
                       <Stat>
-                        <StatLabel>Grãos Quebrados</StatLabel>
-                        <StatNumber>2%</StatNumber>
-                        <StatHelpText>Excelente integridade</StatHelpText>
+                        <StatLabel color={currentTheme.colors.text.secondary}>Grãos Quebrados</StatLabel>
+                        <StatNumber color={currentTheme.colors.text.primary}>2%</StatNumber>
+                        <StatHelpText color={currentTheme.colors.text.tertiary}>Excelente integridade</StatHelpText>
                       </Stat>
                     </SimpleGrid>
 
@@ -385,31 +442,31 @@ const CoffeeAnalysis: React.FC = () => {
                           <Td>Grãos Pretos</Td>
                           <Td>0</Td>
                           <Td>-</Td>
-                          <Td><Badge colorScheme="green">OK</Badge></Td>
+                          <Td><Badge bg={currentTheme.colors.status.success} color={currentTheme.colors.text.inverse}>OK</Badge></Td>
                         </Tr>
                         <Tr>
                           <Td>Grãos Ardidos</Td>
                           <Td>1</Td>
                           <Td>Baixo</Td>
-                          <Td><Badge colorScheme="green">OK</Badge></Td>
+                          <Td><Badge bg={currentTheme.colors.status.success} color={currentTheme.colors.text.inverse}>OK</Badge></Td>
                         </Tr>
                         <Tr>
                           <Td>Grãos Verdes</Td>
                           <Td>2</Td>
                           <Td>Baixo</Td>
-                          <Td><Badge colorScheme="yellow">Atenção</Badge></Td>
+                          <Td><Badge bg={currentTheme.colors.status.warning} color={currentTheme.colors.text.inverse}>Atenção</Badge></Td>
                         </Tr>
                         <Tr>
                           <Td>Conchas</Td>
                           <Td>0</Td>
                           <Td>-</Td>
-                          <Td><Badge colorScheme="green">OK</Badge></Td>
+                          <Td><Badge bg={currentTheme.colors.status.success} color={currentTheme.colors.text.inverse}>OK</Badge></Td>
                         </Tr>
                         <Tr>
                           <Td>Brocados</Td>
                           <Td>0</Td>
                           <Td>-</Td>
-                          <Td><Badge colorScheme="green">OK</Badge></Td>
+                          <Td><Badge bg={currentTheme.colors.status.success} color={currentTheme.colors.text.inverse}>OK</Badge></Td>
                         </Tr>
                       </Tbody>
                     </Table>
@@ -440,7 +497,7 @@ const CoffeeAnalysis: React.FC = () => {
                             <Td>{analysis.id}</Td>
                             <Td>{analysis.date}</Td>
                             <Td>
-                              <Badge colorScheme={getScoreColor(analysis.score)}>
+                              <Badge bg={getScoreColor(analysis.score)} color={currentTheme.colors.text.inverse}>
                                 {analysis.score}
                               </Badge>
                             </Td>
@@ -454,7 +511,12 @@ const CoffeeAnalysis: React.FC = () => {
                       </Tbody>
                     </Table>
 
-                    <Button variant="outline" colorScheme="green">
+                    <Button
+                      variant="outline"
+                      borderColor={currentTheme.colors.status.success}
+                      color={currentTheme.colors.status.success}
+                      _hover={{ bg: currentTheme.colors.status.success, color: currentTheme.colors.text.inverse }}
+                    >
                       Exportar Relatório Completo
                     </Button>
                   </VStack>
