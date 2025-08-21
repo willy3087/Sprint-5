@@ -18,7 +18,6 @@ import {
   Spacer,
   Icon,
   Divider,
-  Image,
   Avatar,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
@@ -38,6 +37,8 @@ import {
   Activity,
 } from 'react-feather';
 import HeroSection from '../components/home/HeroSection';
+import ImageWithFallback from '../components/common/ImageWithFallback';
+import StatusTag, { getTagCategory } from '../components/common/StatusTag';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -249,7 +250,7 @@ const Home: React.FC = () => {
           {/* News Section */}
           <GridItem>
             {/* Section Header */}
-            <Card bg={currentTheme.colors.background.primary} borderWidth={1} borderColor={currentTheme.colors.border.primary} mb={6}>
+            <Card bg="white" borderWidth={1} borderColor={currentTheme.colors.border.primary} mb={6}>
               <CardBody>
                 <Flex align="center" mb={4}>
                   <HStack spacing={3}>
@@ -305,9 +306,10 @@ const Home: React.FC = () => {
                       cursor="pointer"
                       _hover={{ transform: 'translateY(-4px)', boxShadow: 'lg' }}
                       transition="all 0.3s"
+                      h="100%"
                     >
-                      <Box position="relative" w="100%" h={{ base: '200px', md: '250px' }}>
-                        <Image
+                      <Box position="relative" w="100%" h={{ base: '200px', md: '300px', lg: '350px' }}>
+                        <ImageWithFallback
                           src={featuredNews.main.image}
                           alt={featuredNews.main.title}
                           w="100%"
@@ -315,17 +317,17 @@ const Home: React.FC = () => {
                           objectFit="cover"
                         />
                       </Box>
-                      <CardBody>
-                        <Badge bg={currentTheme.colors.status.error} color="white" mb={2}>
+                      <CardBody display="flex" flexDirection="column" flex="1">
+                        <StatusTag category={getTagCategory(featuredNews.main.category)} mb={2}>
                           {featuredNews.main.category}
-                        </Badge>
-                        <Heading size="md" mb={2} color={currentTheme.colors.text.primary}>
+                        </StatusTag>
+                        <Heading size="md" mb={3} color={currentTheme.colors.text.primary}>
                           {featuredNews.main.title}
                         </Heading>
-                        <Text color={currentTheme.colors.text.secondary} mb={3}>
+                        <Text color={currentTheme.colors.text.secondary} mb={4} flex="1">
                           {featuredNews.main.excerpt}
                         </Text>
-                        <Flex justify="space-between" align="center">
+                        <Flex justify="space-between" align="center" mt="auto">
                           <HStack spacing={3} fontSize="sm" color={currentTheme.colors.text.secondary}>
                             <HStack>
                               <Avatar size="xs" name={featuredNews.main.author} />
@@ -353,7 +355,7 @@ const Home: React.FC = () => {
 
                   {/* Secondary Featured */}
                   <GridItem>
-                    <VStack spacing={4}>
+                    <VStack spacing={4} h="100%">
                       {featuredNews.secondary.map((news) => (
                         <Card
                           key={news.id}
@@ -364,9 +366,10 @@ const Home: React.FC = () => {
                           cursor="pointer"
                           _hover={{ transform: 'translateY(-2px)', boxShadow: 'md' }}
                           transition="all 0.3s"
+                          flex="1"
                         >
-                          <Box w="100%" h="120px">
-                            <Image
+                          <Box w="100%" h="140px">
+                            <ImageWithFallback
                               src={news.image}
                               alt={news.title}
                               w="100%"
@@ -374,17 +377,17 @@ const Home: React.FC = () => {
                               objectFit="cover"
                             />
                           </Box>
-                          <CardBody p={3}>
-                            <Badge bg={currentTheme.colors.status.info} color="white" mb={2} fontSize="xs">
+                          <CardBody p={4} display="flex" flexDirection="column">
+                            <StatusTag category={getTagCategory(news.category)} size="sm" mb={2}>
                               {news.category}
-                            </Badge>
-                            <Heading size="sm" mb={1} color={currentTheme.colors.text.primary}>
+                            </StatusTag>
+                            <Heading size="sm" mb={2} color={currentTheme.colors.text.primary}>
                               {news.title}
                             </Heading>
-                            <Text fontSize="xs" color={currentTheme.colors.text.secondary} mb={2}>
+                            <Text fontSize="sm" color={currentTheme.colors.text.secondary} mb={3} flex="1">
                               {news.excerpt}
                             </Text>
-                            <HStack justify="space-between" fontSize="xs" color={currentTheme.colors.text.secondary}>
+                            <HStack justify="space-between" fontSize="xs" color={currentTheme.colors.text.secondary} mt="auto">
                               <HStack>
                                 <Icon as={Clock} boxSize={3} />
                                 <Text>{news.date}</Text>
@@ -416,7 +419,7 @@ const Home: React.FC = () => {
                       <CardBody>
                         <Flex gap={4}>
                           <Box flexShrink={0} w="100px" h="100px">
-                            <Image
+                            <ImageWithFallback
                               src={news.image}
                               alt={news.title}
                               w="100%"
@@ -427,9 +430,9 @@ const Home: React.FC = () => {
                           </Box>
                           <Box flex={1}>
                             <Flex justify="space-between" align="start" mb={2}>
-                              <Badge bg={currentTheme.colors.status.success} color="white" fontSize="xs">
+                              <StatusTag category={getTagCategory(news.category)} size="sm">
                                 {news.category}
-                              </Badge>
+                              </StatusTag>
                               <HStack spacing={2}>
                                 <Icon as={Bookmark} boxSize={4} cursor="pointer" color={currentTheme.colors.text.secondary} />
                                 <Icon as={Share2} boxSize={4} cursor="pointer" color={currentTheme.colors.text.secondary} />
@@ -478,7 +481,7 @@ const Home: React.FC = () => {
           <GridItem>
             <VStack spacing={6} position="sticky" top="20px">
               {/* Market Indicators */}
-              <Card bg={currentTheme.colors.background.primary} borderWidth={1} borderColor={currentTheme.colors.border.primary} w="100%">
+              <Card bg="white" borderWidth={1} borderColor={currentTheme.colors.border.primary} w="100%">
                 <CardHeader pb={2}>
                   <HStack spacing={2}>
                     <Icon as={TrendingUp} color={currentTheme.colors.primary} boxSize={5} />
@@ -520,7 +523,7 @@ const Home: React.FC = () => {
               </Card>
 
               {/* Quick Links */}
-              <Card bg={currentTheme.colors.background.primary} borderWidth={1} borderColor={currentTheme.colors.border.primary} w="100%">
+              <Card bg="white" borderWidth={1} borderColor={currentTheme.colors.border.primary} w="100%">
                 <CardHeader pb={2}>
                   <HStack spacing={2}>
                     <Icon as={Activity} color={currentTheme.colors.primary} boxSize={5} />
@@ -547,7 +550,7 @@ const Home: React.FC = () => {
               </Card>
 
               {/* Upcoming Events */}
-              <Card bg={currentTheme.colors.background.primary} borderWidth={1} borderColor={currentTheme.colors.border.primary} w="100%">
+              <Card bg="white" borderWidth={1} borderColor={currentTheme.colors.border.primary} w="100%">
                 <CardHeader pb={2}>
                   <HStack spacing={2}>
                     <Icon as={Calendar} color={currentTheme.colors.primary} boxSize={5} />
@@ -588,7 +591,7 @@ const Home: React.FC = () => {
               </Card>
 
               {/* Newsletter */}
-              <Card bg={currentTheme.colors.background.secondary} borderWidth={2} borderColor={currentTheme.colors.border.focus} w="100%">
+              <Card bg="white" borderWidth={2} borderColor={currentTheme.colors.border.focus} w="100%">
                 <CardBody>
                   <VStack spacing={3}>
                     <HStack spacing={2}>

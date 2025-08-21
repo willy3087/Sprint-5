@@ -237,7 +237,13 @@ export function ThemeSelector() {
       </select>
       
       {showCustom && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '8px',
+          position: 'relative',
+          zIndex: 9999
+        }}>
           <input
             type="color"
             value={customColor}
@@ -251,7 +257,11 @@ export function ThemeSelector() {
               border: '2px solid white',
               borderRadius: '6px',
               cursor: 'pointer',
-              padding: '2px'
+              padding: '2px',
+              backgroundColor: 'transparent',
+              WebkitAppearance: 'none',
+              MozAppearance: 'none',
+              appearance: 'none'
             }}
           />
           <span style={{ 

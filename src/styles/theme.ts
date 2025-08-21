@@ -298,7 +298,6 @@ const theme = extendTheme({
   },
   styles: {
     global: {
-      '@import': "url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap')",
       body: {
         bg: 'gray.50',
         color: 'gray.800',

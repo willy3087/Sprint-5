@@ -61,15 +61,15 @@ import {
 import PageHeader from '../components/PageHeader';
 import { Coffee } from 'react-feather';
 import { FaCoffee, FaCalculator, FaChartLine, FaDollarSign, FaGlobeAmericas, FaCheckCircle, FaChild, FaDatabase } from 'react-icons/fa';
+import { BarChart2, Package, Settings, TrendingUp as TrendingUpIcon, Truck, Clipboard, Shield } from 'react-feather';
 import { FaArrowTrendUp } from 'react-icons/fa6';
 import { MdTrendingUp, MdTrendingDown, MdTrendingFlat } from 'react-icons/md';
 import { useThemeContext } from '../contexts/ThemeContext';
 
 const Features: React.FC = () => {
   const { currentTheme } = useThemeContext();
-  const bgCard = currentTheme.colors.background.primary;
   const borderColor = currentTheme.colors.border.primary;
-  const subCardBg = currentTheme.colors.background.secondary;
+  const subCardBg = 'white';
 
   // Modal state
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -109,7 +109,7 @@ const Features: React.FC = () => {
     {
       icon: FaArrowTrendUp,
       label: 'Clima Safra',
-      value: '☀️ Normal',
+      value: 'Normal',
       change: '',
       trend: 'up',
       color: currentTheme.colors.primary
@@ -187,14 +187,17 @@ const Features: React.FC = () => {
           {/* Área Principal */}
           <GridItem>
             {/* KPIs Principais */}
-            <Card bg={bgCard} borderWidth={1} borderColor={borderColor} mb={6}>
+            <Card bg="white" borderWidth={1} borderColor={borderColor} mb={6}>
               <CardHeader>
-                <Heading size="md">📊 KPIs Principais do Mercado</Heading>
+                <HStack>
+          <Icon as={BarChart2} color={currentTheme.colors.primary} />
+          <Heading size="md">KPIs Principais do Mercado</Heading>
+        </HStack>
               </CardHeader>
               <CardBody>
                 <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4}>
                   {kpisPrincipais.map((kpi, idx) => (
-                    <Card key={idx} bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                    <Card key={idx} bg="white" borderWidth={1} borderColor={borderColor}>
                       <CardBody textAlign="center">
                         <Icon as={kpi.icon} boxSize={8} color={kpi.color} mb={4} />
                         <Stat>
@@ -214,7 +217,7 @@ const Features: React.FC = () => {
 
 
             {/* Simulação de Cenários */}
-            <Card bg={bgCard} borderWidth={1} borderColor={borderColor} mb={6}>
+            <Card bg="white" borderWidth={1} borderColor={borderColor} mb={6}>
               <CardHeader>
                 <Flex align="center">
                   <Icon as={FaChartLine} mr={4} color={currentTheme.colors.accent} />
@@ -235,7 +238,7 @@ const Features: React.FC = () => {
                     const corTema = getCorCenario(cenario.cor);
                     
                     return (
-                      <Card key={idx} bg={subCardBg} borderWidth={2} borderColor={corTema}>
+                      <Card key={idx} bg="white" borderWidth={2} borderColor={corTema}>
                         <CardBody textAlign="center">
                           <Badge bg={corTema} color="white" mb={3} fontSize="sm">
                             {cenario.nome}
@@ -278,13 +281,16 @@ const Features: React.FC = () => {
             </Card>
 
             {/* Canais de Comercialização */}
-            <Card bg={bgCard} borderWidth={1} borderColor={borderColor} mb={6}>
+            <Card bg="white" borderWidth={1} borderColor={borderColor} mb={6}>
               <CardHeader>
-                <Heading size="md">📦 Canais de Comercialização</Heading>
+                <HStack>
+          <Icon as={Package} color={currentTheme.colors.primary} />
+          <Heading size="md">Canais de Comercialização</Heading>
+        </HStack>
               </CardHeader>
               <CardBody>
                 <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-                  <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                  <Card bg="white" borderWidth={1} borderColor={borderColor}>
                     <CardBody>
                       <Flex justify="space-between" align="center" mb={4}>
                         <Heading size="sm">Via Cooperativa</Heading>
@@ -313,7 +319,7 @@ const Features: React.FC = () => {
                       </VStack>
                     </CardBody>
                   </Card>
-                  <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                  <Card bg="white" borderWidth={1} borderColor={borderColor}>
                     <CardBody>
                       <Flex justify="space-between" align="center" mb={4}>
                         <Heading size="sm">Via Corretor</Heading>
@@ -356,14 +362,17 @@ const Features: React.FC = () => {
             </Card>
 
             {/* Comparativo de Mercados */}
-            <Card bg={bgCard} borderWidth={1} borderColor={borderColor} mb={6}>
+            <Card bg="white" borderWidth={1} borderColor={borderColor} mb={6}>
               <CardHeader>
-                <Heading size="md">💱 Comparativo de Mercados</Heading>
+                <HStack>
+          <Icon as={TrendingUpIcon} color={currentTheme.colors.primary} />
+          <Heading size="md">Comparativo de Mercados</Heading>
+        </HStack>
               </CardHeader>
               <CardBody>
                 <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
                   {/* Mercado Interno */}
-                  <Card bg={subCardBg} borderWidth={2} borderColor={currentTheme.colors.status.success}>
+                  <Card bg="white" borderWidth={2} borderColor={currentTheme.colors.status.success}>
                     <CardHeader pb={2}>
                       <Flex align="center" justify="space-between">
                         <HStack>
@@ -416,7 +425,7 @@ const Features: React.FC = () => {
                   </Card>
 
                   {/* Mercado Externo */}
-                  <Card bg={subCardBg} borderWidth={2} borderColor={currentTheme.colors.status.info}>
+                  <Card bg="white" borderWidth={2} borderColor={currentTheme.colors.status.info}>
                     <CardHeader pb={2}>
                       <Flex align="center" justify="space-between">
                         <HStack>
@@ -472,7 +481,7 @@ const Features: React.FC = () => {
                 {/* Tabela Comparativa de Preços */}
                 <Box mt={6}>
                   <Heading size="sm" mb={4}>Comparativo de Preços por Mercado</Heading>
-                  <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                  <Card bg="white" borderWidth={1} borderColor={borderColor}>
                     <CardBody p={0}>
                       <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={0}>
                         <Box p={4} borderRight={{ base: "none", md: "1px" }} borderBottom={{ base: "1px", lg: "none" }} borderColor={borderColor}>
@@ -536,37 +545,37 @@ const Features: React.FC = () => {
                 <Box mt={6}>
                   <Heading size="sm" mb={4}>Componentes do Preço (R$/saca)</Heading>
                   <SimpleGrid columns={{ base: 2, md: 5 }} spacing={4}>
-                    <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                    <Card bg="white" borderWidth={1} borderColor={borderColor}>
                       <CardBody textAlign="center" p={3}>
-                        <Text fontSize="2xl" mb={1}>🌱</Text>
+                        <Icon as={FaGlobeAmericas} boxSize={6} color={currentTheme.colors.primary} mb={1} />
                         <Text fontSize="lg" fontWeight="bold">45%</Text>
                         <Text fontSize="xs" color="gray.600">Produção</Text>
                       </CardBody>
                     </Card>
-                    <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                    <Card bg="white" borderWidth={1} borderColor={borderColor}>
                       <CardBody textAlign="center" p={3}>
-                        <Text fontSize="2xl" mb={1}>🚚</Text>
+                        <Icon as={Truck} boxSize={6} color={currentTheme.colors.primary} mb={1} />
                         <Text fontSize="lg" fontWeight="bold">15%</Text>
                         <Text fontSize="xs" color="gray.600">Logística</Text>
                       </CardBody>
                     </Card>
-                    <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                    <Card bg="white" borderWidth={1} borderColor={borderColor}>
                       <CardBody textAlign="center" p={3}>
-                        <Text fontSize="2xl" mb={1}>⚙️</Text>
+                        <Icon as={Settings} boxSize={6} color={currentTheme.colors.primary} mb={1} />
                         <Text fontSize="lg" fontWeight="bold">12%</Text>
                         <Text fontSize="xs" color="gray.600">Benefício</Text>
                       </CardBody>
                     </Card>
-                    <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                    <Card bg="white" borderWidth={1} borderColor={borderColor}>
                       <CardBody textAlign="center" p={3}>
-                        <Text fontSize="2xl" mb={1}>💹</Text>
+                        <Icon as={TrendingUpIcon} boxSize={6} color={currentTheme.colors.primary} mb={1} />
                         <Text fontSize="lg" fontWeight="bold">18%</Text>
                         <Text fontSize="xs" color="gray.600">Mercado</Text>
                       </CardBody>
                     </Card>
-                    <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                    <Card bg="white" borderWidth={1} borderColor={borderColor}>
                       <CardBody textAlign="center" p={3}>
-                        <Text fontSize="2xl" mb={1}>📋</Text>
+                        <Icon as={Clipboard} boxSize={6} color={currentTheme.colors.primary} mb={1} />
                         <Text fontSize="lg" fontWeight="bold">10%</Text>
                         <Text fontSize="xs" color="gray.600">Taxas</Text>
                       </CardBody>
@@ -589,13 +598,16 @@ const Features: React.FC = () => {
             </Card>
 
             {/* Instrumentos de Proteção */}
-            <Card bg={bgCard} borderWidth={1} borderColor={borderColor} mb={6}>
+            <Card bg="white" borderWidth={1} borderColor={borderColor} mb={6}>
               <CardHeader>
-                <Heading size="md">🛡️ Instrumentos de Proteção</Heading>
+                <HStack>
+          <Icon as={Shield} color={currentTheme.colors.primary} />
+          <Heading size="md">Instrumentos de Proteção</Heading>
+        </HStack>
               </CardHeader>
               <CardBody>
                 <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4} mb={6}>
-                  <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                  <Card bg="white" borderWidth={1} borderColor={borderColor}>
                     <CardBody textAlign="center">
                       <VStack spacing={4}>
                         <Text fontSize="sm" color="gray.600" fontWeight="medium">BMF (Brasil)</Text>
@@ -621,7 +633,7 @@ const Features: React.FC = () => {
                     </CardBody>
                   </Card>
 
-                  <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                  <Card bg="white" borderWidth={1} borderColor={borderColor}>
                     <CardBody textAlign="center">
                       <VStack spacing={4}>
                         <Text fontSize="sm" color="gray.600" fontWeight="medium">NY (EUA)</Text>
@@ -647,7 +659,7 @@ const Features: React.FC = () => {
                     </CardBody>
                   </Card>
 
-                  <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                  <Card bg="white" borderWidth={1} borderColor={borderColor}>
                     <CardBody textAlign="center">
                       <VStack spacing={4}>
                         <Text fontSize="sm" color="gray.600" fontWeight="medium">Hedge Médio</Text>
@@ -678,7 +690,7 @@ const Features: React.FC = () => {
                 <Box mb={6}>
                   <Heading size="sm" mb={4}>Estratégias de Proteção Disponíveis</Heading>
                   <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-                    <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                    <Card bg="white" borderWidth={1} borderColor={borderColor}>
                       <CardBody>
                         <HStack mb={3}>
                           <Icon as={FaChild} color={currentTheme.colors.status.warning} boxSize={5} />
@@ -705,7 +717,7 @@ const Features: React.FC = () => {
                       </CardBody>
                     </Card>
 
-                    <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                    <Card bg="white" borderWidth={1} borderColor={borderColor}>
                       <CardBody>
                         <HStack mb={3}>
                           <Icon as={FaChartLine} color={currentTheme.colors.status.info} boxSize={5} />
@@ -747,13 +759,16 @@ const Features: React.FC = () => {
             </Card>
 
             {/* Fontes de Dados Disponíveis */}
-            <Card bg={bgCard} borderWidth={1} borderColor={borderColor} mb={6}>
+            <Card bg="white" borderWidth={1} borderColor={borderColor} mb={6}>
               <CardHeader>
-                <Heading size="md">📊 Fontes de Dados Disponíveis</Heading>
+                <HStack>
+          <Icon as={BarChart2} color={currentTheme.colors.primary} />
+          <Heading size="md">Fontes de Dados Disponíveis</Heading>
+        </HStack>
               </CardHeader>
               <CardBody>
                 <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} mb={6}>
-                  <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                  <Card bg="white" borderWidth={1} borderColor={borderColor}>
                     <CardBody>
                       <Flex justify="space-between" align="center" mb={4}>
                         <HStack>
@@ -801,7 +816,7 @@ const Features: React.FC = () => {
                     </CardBody>
                   </Card>
 
-                  <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                  <Card bg="white" borderWidth={1} borderColor={borderColor}>
                     <CardBody>
                       <Flex justify="space-between" align="center" mb={4}>
                         <HStack>
@@ -854,7 +869,7 @@ const Features: React.FC = () => {
                 <Box mb={6}>
                   <Heading size="sm" mb={4}>Disponibilidade por Tipo de Informação</Heading>
                   <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4}>
-                    <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                    <Card bg="white" borderWidth={1} borderColor={borderColor}>
                       <CardBody textAlign="center">
                         <VStack spacing={2}>
                           <Text fontSize="sm" color="gray.600" fontWeight="medium">Preços</Text>
@@ -868,7 +883,7 @@ const Features: React.FC = () => {
                       </CardBody>
                     </Card>
 
-                    <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                    <Card bg="white" borderWidth={1} borderColor={borderColor}>
                       <CardBody textAlign="center">
                         <VStack spacing={2}>
                           <Text fontSize="sm" color="gray.600" fontWeight="medium">Classificação</Text>
@@ -882,7 +897,7 @@ const Features: React.FC = () => {
                       </CardBody>
                     </Card>
 
-                    <Card bg={subCardBg} borderWidth={1} borderColor={borderColor}>
+                    <Card bg="white" borderWidth={1} borderColor={borderColor}>
                       <CardBody textAlign="center">
                         <VStack spacing={2}>
                           <Text fontSize="sm" color="gray.600" fontWeight="medium">Clima</Text>
@@ -966,19 +981,19 @@ const Features: React.FC = () => {
 
           {/* Sidebar */}
           <GridItem>
-            <Card bg={bgCard} borderWidth={1} borderColor={borderColor} position="sticky" top={4}>
+            <Card bg="white" borderWidth={1} borderColor={borderColor} position="sticky" top={4}>
               <CardHeader>
                 <Heading size="md">Ações Rápidas</Heading>
               </CardHeader>
               <CardBody>
                 <VStack spacing={4} align="stretch">
-                  <Button leftIcon={<FaCalculator />} borderColor={currentTheme.colors.status.info} color={currentTheme.colors.status.info} variant="outline" onClick={onOpen}>
+                  <Button leftIcon={<FaCalculator />} bg={currentTheme.colors.primary} color="white" _hover={{ bg: currentTheme.colors.secondary }} onClick={onOpen}>
                     Calculadora de Preços
                   </Button>
-                  <Button leftIcon={<FaChartLine />} borderColor={currentTheme.colors.status.success} color={currentTheme.colors.status.success} variant="outline">
+                  <Button leftIcon={<FaChartLine />} bg={currentTheme.colors.secondary} color="white" _hover={{ bg: currentTheme.colors.secondaryLight }}>
                     Relatório Detalhado
                   </Button>
-                  <Button leftIcon={<FaDollarSign />} borderColor={currentTheme.colors.accent} color={currentTheme.colors.accent} variant="outline">
+                  <Button leftIcon={<FaDollarSign />} bg={currentTheme.colors.secondary} color="white" _hover={{ bg: currentTheme.colors.secondaryLight }}>
                     Configurar Alertas
                   </Button>
                 </VStack>
@@ -1009,19 +1024,19 @@ const Features: React.FC = () => {
                 <VStack spacing={3} align="stretch">
                   <Box p={3} bg={subCardBg} borderRadius="md">
                     <HStack>
-                      <Text fontSize="lg">💡</Text>
+                      <Icon as={FaCalculator} color={currentTheme.colors.primary} />
                       <Text fontSize="sm">Diversifique canais de venda para reduzir riscos</Text>
                     </HStack>
                   </Box>
                   <Box p={3} bg={subCardBg} borderRadius="md">
                     <HStack>
-                      <Text fontSize="lg">📈</Text>
+                      <Icon as={FaChartLine} color={currentTheme.colors.primary} />
                       <Text fontSize="sm">Monitore clima semanalmente para decisões de hedge</Text>
                     </HStack>
                   </Box>
                   <Box p={3} bg={subCardBg} borderRadius="md">
                     <HStack>
-                      <Text fontSize="lg">🎯</Text>
+                      <Icon as={FaDollarSign} color={currentTheme.colors.primary} />
                       <Text fontSize="sm">Considere contratos futuros para 30% da safra</Text>
                     </HStack>
                   </Box>

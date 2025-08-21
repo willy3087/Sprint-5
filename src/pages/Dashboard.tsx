@@ -41,6 +41,7 @@ import {
   Filler,
 } from 'chart.js';
 import { FaCoffee, FaThermometerHalf, FaBox, FaGlobeAmericas, FaDollarSign, FaChartLine } from 'react-icons/fa';
+import { BarChart2, TrendingUp as TrendingUpIcon, TrendingDown, ArrowRight, FileText } from 'react-feather';
 import { BsArrowRepeat, BsCloudRain, BsFuelPump, BsBank, BsGlobe2 } from 'react-icons/bs';
 import { MdTrendingUp } from 'react-icons/md';
 import { BarChart } from 'react-feather';
@@ -214,11 +215,11 @@ const Dashboard: React.FC = () => {
   const getImpactIcon = (impact: string) => {
     switch (impact) {
       case 'positive':
-        return '📈';
+        return <Icon as={TrendingUpIcon} size={16} color={currentTheme.colors.status.success} />;
       case 'negative':
-        return '📉';
+        return <Icon as={TrendingDown} size={16} color={currentTheme.colors.status.error} />;
       default:
-        return '➡️';
+        return <Icon as={ArrowRight} size={16} color={currentTheme.colors.text.secondary} />;
     }
   };
 
@@ -256,10 +257,13 @@ const Dashboard: React.FC = () => {
             </SimpleGrid>
 
             {/* Market Predictions */}
-            <Card bg={currentTheme.colors.background.primary} borderWidth={1} borderColor={currentTheme.colors.border.primary} mb={8}>
+            <Card bg="white" borderWidth={1} borderColor={currentTheme.colors.border.primary} mb={8}>
               <CardHeader>
                 <Flex align="center">
-                  <Heading size="md" color={currentTheme.colors.text.primary}>📊 Previsões de Mercado</Heading>
+                  <HStack>
+                    <Icon as={BarChart2} color={currentTheme.colors.primary} />
+                    <Heading size="md" color={currentTheme.colors.text.primary}>Previsões de Mercado</Heading>
+                  </HStack>
                   <Spacer />
                   <Badge bg={currentTheme.colors.status.success} color="white" fontSize="xs">Atualizado</Badge>
                 </Flex>
@@ -267,7 +271,7 @@ const Dashboard: React.FC = () => {
               <CardBody>
                 <Grid templateColumns={{ base: '1fr', md: 'repeat(3, 1fr)' }} gap={6}>
                   {marketPredictions.map((prediction, index) => (
-                    <Card key={index} bg={currentTheme.colors.background.secondary} borderWidth={1} borderColor={currentTheme.colors.border.primary}>
+                    <Card key={index} bg="white" borderWidth={1} borderColor={currentTheme.colors.border.primary}>
                       <CardBody>
                         <Text fontWeight="bold" mb={4} color={currentTheme.colors.text.primary}>{prediction.period}</Text>
                         
@@ -313,9 +317,15 @@ const Dashboard: React.FC = () => {
                           <Text fontSize="xs" color={currentTheme.colors.text.secondary}>Faixa Prevista:</Text>
                           <Text fontSize="sm" fontWeight="bold" color={currentTheme.colors.text.primary}>{prediction.range}</Text>
                           <Badge
-                            bg={prediction.confidence === 'Alta' ? currentTheme.colors.status.success : currentTheme.colors.status.warning}
-                            color="white"
-                            size="sm"
+                            bg={prediction.confidence === 'Alta' ? `${currentTheme.colors.status.success}15` : `${currentTheme.colors.status.warning}15`}
+                            color={prediction.confidence === 'Alta' ? currentTheme.colors.status.success : currentTheme.colors.status.warning}
+                            borderWidth="1px"
+                            borderColor={prediction.confidence === 'Alta' ? `${currentTheme.colors.status.success}30` : `${currentTheme.colors.status.warning}30`}
+                            borderRadius="full"
+                            px={2.5}
+                            py={0.5}
+                            fontSize="xs"
+                            fontWeight="500"
                           >
                             Confiança: {prediction.confidence}
                           </Badge>
@@ -330,9 +340,12 @@ const Dashboard: React.FC = () => {
             {/* Charts Section */}
             <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={6} mb={8}>
               {/* Price Composition Chart */}
-              <Card bg={currentTheme.colors.background.primary} borderWidth={1} borderColor={currentTheme.colors.border.primary}>
+              <Card bg="white" borderWidth={1} borderColor={currentTheme.colors.border.primary}>
                 <CardHeader>
-                  <Heading size="md" color={currentTheme.colors.text.primary}>📈 Composição do Preço</Heading>
+                  <HStack>
+                    <Icon as={BarChart2} color={currentTheme.colors.primary} />
+                    <Heading size="md" color={currentTheme.colors.text.primary}>Composição do Preço</Heading>
+                  </HStack>
                 </CardHeader>
                 <CardBody>
                   <Box h="300px">
@@ -342,9 +355,12 @@ const Dashboard: React.FC = () => {
               </Card>
 
               {/* Price Trend Chart */}
-              <Card bg={currentTheme.colors.background.primary} borderWidth={1} borderColor={currentTheme.colors.border.primary}>
+              <Card bg="white" borderWidth={1} borderColor={currentTheme.colors.border.primary}>
                 <CardHeader>
-                  <Heading size="md" color={currentTheme.colors.text.primary}>📊 Tendência de Preços</Heading>
+                  <HStack>
+                    <Icon as={TrendingUpIcon} color={currentTheme.colors.primary} />
+                    <Heading size="md" color={currentTheme.colors.text.primary}>Tendência de Preços</Heading>
+                  </HStack>
                 </CardHeader>
                 <CardBody>
                   <Box h="300px">
@@ -355,14 +371,17 @@ const Dashboard: React.FC = () => {
             </Grid>
 
             {/* Impact Factors */}
-            <Card bg={currentTheme.colors.background.primary} borderWidth={1} borderColor={currentTheme.colors.border.primary}>
+            <Card bg="white" borderWidth={1} borderColor={currentTheme.colors.border.primary}>
               <CardHeader>
-                <Heading size="md" color={currentTheme.colors.text.primary}>⚡ Fatores de Impacto no Preço</Heading>
+                <HStack>
+                  <Icon as={FaChartLine} color={currentTheme.colors.primary} />
+                  <Heading size="md" color={currentTheme.colors.text.primary}>Fatores de Impacto no Preço</Heading>
+                </HStack>
               </CardHeader>
               <CardBody>
                 <SimpleGrid columns={{ base: 2, md: 3, lg: 6 }} spacing={4}>
                   {impactFactors.map((factor, index) => (
-                    <Card key={index} bg={currentTheme.colors.background.secondary} borderWidth={1} borderColor={currentTheme.colors.border.primary}>
+                    <Card key={index} bg="white" borderWidth={1} borderColor={currentTheme.colors.border.primary}>
                       <CardBody textAlign="center" p={4}>
                         <Icon as={factor.icon} boxSize={8} color={currentTheme.colors.primary} mb={2} />
                         <Text fontSize="sm" fontWeight="bold" mb={1} color={currentTheme.colors.text.primary}>{factor.label}</Text>
@@ -379,10 +398,13 @@ const Dashboard: React.FC = () => {
 
           {/* Sidebar */}
           <GridItem>
-            <Card bg={currentTheme.colors.background.primary} borderWidth={1} borderColor={currentTheme.colors.border.primary} position="sticky" top={4}>
+            <Card bg="white" borderWidth={1} borderColor={currentTheme.colors.border.primary} position="sticky" top={4}>
               <CardHeader>
                 <Flex align="center">
-                  <Heading size="md" color={currentTheme.colors.text.primary}>📰 Notícias do Mercado</Heading>
+                  <HStack>
+                    <Icon as={FileText} color={currentTheme.colors.primary} />
+                    <Heading size="md" color={currentTheme.colors.text.primary}>Notícias do Mercado</Heading>
+                  </HStack>
                   <Spacer />
                   <Button
                     size="sm"
@@ -399,10 +421,16 @@ const Dashboard: React.FC = () => {
                 <VStack spacing={4} align="stretch">
                   {marketNews.map((news, index) => (
                     <Box key={index}>
-                      <Card bg={currentTheme.colors.background.secondary} borderWidth={1} borderColor={currentTheme.colors.border.primary}>
+                      <Card 
+                        bg={currentTheme.colors.background.secondary} 
+                        borderWidth={1} 
+                        borderColor={currentTheme.colors.border.primary}
+                        cursor="pointer"
+                        transition="all 0.3s"
+                        _hover={{ transform: 'translateY(-2px)', boxShadow: 'md' }}>
                         <CardBody>
                           <HStack spacing={2} mb={2}>
-                            <Text fontSize="lg">{getImpactIcon(news.impact)}</Text>
+                            {getImpactIcon(news.impact)}
                             <Text fontWeight="bold" fontSize="sm" flex={1} color={currentTheme.colors.text.primary}>
                               {news.title}
                             </Text>
@@ -413,12 +441,26 @@ const Dashboard: React.FC = () => {
                           <Flex justify="space-between" align="center">
                             <Badge
                               bg={
-                                news.priority === 'Alta' ? currentTheme.colors.status.error :
-                                news.priority === 'Média' ? currentTheme.colors.status.warning :
-                                currentTheme.colors.status.success
+                                news.priority === 'Alta' ? `${currentTheme.colors.status.success}15` :
+                                news.priority === 'Média' ? `${currentTheme.colors.status.warning}15` :
+                                `${currentTheme.colors.status.error}15`
                               }
-                              color="white"
+                              color={
+                                news.priority === 'Alta' ? currentTheme.colors.status.success :
+                                news.priority === 'Média' ? currentTheme.colors.status.warning :
+                                currentTheme.colors.status.error
+                              }
+                              borderWidth="1px"
+                              borderColor={
+                                news.priority === 'Alta' ? `${currentTheme.colors.status.success}30` :
+                                news.priority === 'Média' ? `${currentTheme.colors.status.warning}30` :
+                                `${currentTheme.colors.status.error}30`
+                              }
+                              borderRadius="full"
+                              px={2.5}
+                              py={0.5}
                               fontSize="xs"
+                              fontWeight="500"
                             >
                               {news.priority}
                             </Badge>

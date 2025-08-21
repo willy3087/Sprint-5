@@ -9,7 +9,6 @@ import {
   Badge,
   HStack,
   Flex,
-  Image,
   Avatar,
   IconButton,
   Button,
@@ -20,6 +19,7 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import { ChevronRight } from 'react-feather';
+import ImageWithFallback from '../common/ImageWithFallback';
 
 interface NewsItem {
   id: string;
@@ -90,7 +90,7 @@ const NewsSection: React.FC<NewsSectionProps> = ({ newsItems }) => {
                 transition="all 0.3s"
                 _hover={{ transform: 'translateY(-4px)', boxShadow: 'xl' }}
               >
-                <Image
+                <ImageWithFallback
                   src={item.image}
                   alt={item.title}
                   h="200px"

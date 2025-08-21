@@ -251,11 +251,7 @@ const CoffeeAnalysis: React.FC = () => {
                   </CircularProgressLabel>
                 </CircularProgress>
                 <Text fontWeight="bold" color={currentTheme.colors.text.primary}>Score Geral</Text>
-                <Badge
-                  bg={currentTheme.colors.status.success}
-                  color={currentTheme.colors.text.inverse}
-                  fontSize="md"
-                >
+                <Badge bg="green.500" color="white" size="md">
                   Excelente
                 </Badge>
               </VStack>

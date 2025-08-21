@@ -24,7 +24,6 @@ import {
   Icon,
   Flex,
   Spacer,
-  Divider,
 } from '@chakra-ui/react';
 import { useThemeContext } from '../contexts/ThemeContext';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
@@ -44,6 +43,7 @@ import {
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { FaThermometerHalf, FaWind, FaCloudRain, FaCloud, FaBolt, FaTint } from 'react-icons/fa';
+import { Sun, CloudRain as CloudRainIcon, Zap } from 'react-feather';
 import { BsArrowRepeat } from 'react-icons/bs';
 import { Cloud } from 'react-feather';
 
@@ -71,7 +71,6 @@ L.Icon.Default.mergeOptions({
 const WeatherMonitoring: React.FC = () => {
   const { currentTheme } = useThemeContext();
   const [selectedLayer, setSelectedLayer] = useState('temperature');
-  const bgCard = currentTheme.colors.background.primary;
   const borderColor = currentTheme.colors.border.primary;
 
   // Map center - Brazil coffee regions
@@ -98,11 +97,11 @@ const WeatherMonitoring: React.FC = () => {
 
   // Weather forecast cards
   const forecast = [
-    { day: 'Seg', icon: '☀️', temp: '26°C', condition: 'Ensolarado' },
-    { day: 'Ter', icon: '⛅', temp: '25°C', condition: 'Parcialmente nublado' },
-    { day: 'Qua', icon: '☁️', temp: '24°C', condition: 'Nublado' },
-    { day: 'Qui', icon: '🌧️', temp: '23°C', condition: 'Chuva' },
-    { day: 'Sex', icon: '⛈️', temp: '22°C', condition: 'Tempestade' },
+    { day: 'Seg', icon: Sun, temp: '26°C', condition: 'Ensolarado' },
+    { day: 'Ter', icon: FaCloud, temp: '25°C', condition: 'Parcialmente nublado' },
+    { day: 'Qua', icon: FaCloud, temp: '24°C', condition: 'Nublado' },
+    { day: 'Qui', icon: CloudRainIcon, temp: '23°C', condition: 'Chuva' },
+    { day: 'Sex', icon: Zap, temp: '22°C', condition: 'Tempestade' },
   ];
 
   // Chart data using theme colors
@@ -181,18 +180,6 @@ const WeatherMonitoring: React.FC = () => {
     },
   ];
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'Alta':
-        return currentTheme.colors.status.error;
-      case 'Média':
-        return currentTheme.colors.status.warning;
-      case 'Baixa':
-        return currentTheme.colors.status.success;
-      default:
-        return currentTheme.colors.text.secondary;
-    }
-  };
 
   return (
     <Box bg={currentTheme.colors.background.secondary} minH="100vh">
@@ -208,8 +195,8 @@ const WeatherMonitoring: React.FC = () => {
           {/* Main Content Area */}
           <GridItem>
             {/* Weather Map Section */}
-            <Card bg={bgCard} borderWidth={1} borderColor={borderColor} mb={8}>
-              <CardHeader bg={currentTheme.colors.background.tertiary}>
+            <Card bg="white" borderWidth={1} borderColor={borderColor} mb={8}>
+              <CardHeader>
                 <Flex align="center">
                   <Heading size="md" color={currentTheme.colors.text.primary}>KPIs Climáticos - Regiões Produtoras de Café</Heading>
                   <Spacer />
@@ -274,10 +261,10 @@ const WeatherMonitoring: React.FC = () => {
                 {/* KPI Grid */}
                 <Grid templateColumns="repeat(auto-fit, minmax(200px, 1fr))" gap={4} mt={6}>
                   {kpis.map((kpi, index) => (
-                    <Card key={index} bg={bgCard} borderWidth={1} borderColor={borderColor}>
+                    <Card key={index} bg="white" borderWidth={1} borderColor={borderColor}>
                       <CardBody>
                         <Stat textAlign="center">
-                          <Icon as={kpi.icon} boxSize={8} color={currentTheme.colors.accent} mb={2} />
+                          <Icon as={kpi.icon} boxSize={8} color={currentTheme.colors.primary} mb={2} />
                           <StatNumber fontSize="2xl" color={currentTheme.colors.text.primary}>{kpi.value}</StatNumber>
                           <StatLabel color={currentTheme.colors.text.secondary}>{kpi.label}</StatLabel>
                           <StatHelpText color={currentTheme.colors.text.secondary}>
@@ -298,8 +285,8 @@ const WeatherMonitoring: React.FC = () => {
             </Card>
 
             {/* Weather Forecast Cards */}
-            <Card bg={bgCard} borderWidth={1} borderColor={borderColor} mb={8}>
-              <CardHeader bg={currentTheme.colors.background.tertiary}>
+            <Card bg="white" borderWidth={1} borderColor={borderColor} mb={8}>
+              <CardHeader>
                 <Heading size="md" color={currentTheme.colors.text.primary}>Previsão de 5 Dias</Heading>
               </CardHeader>
               <CardBody>
@@ -314,7 +301,7 @@ const WeatherMonitoring: React.FC = () => {
                     >
                       <CardBody textAlign="center">
                         <Text fontWeight="bold" mb={2} color={currentTheme.colors.text.primary}>{day.day}</Text>
-                        <Text fontSize="3xl" mb={2}>{day.icon}</Text>
+                        <Icon as={day.icon} boxSize={8} color={currentTheme.colors.primary} mb={2} />
                         <Text fontSize="xl" fontWeight="bold" color={currentTheme.colors.text.primary}>{day.temp}</Text>
                         <Text fontSize="sm" color={currentTheme.colors.text.secondary}>{day.condition}</Text>
                       </CardBody>
@@ -326,8 +313,8 @@ const WeatherMonitoring: React.FC = () => {
 
             {/* Charts Section */}
             <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={6}>
-              <Card bg={bgCard} borderWidth={1} borderColor={borderColor}>
-                <CardHeader bg={currentTheme.colors.background.tertiary}>
+              <Card bg="white" borderWidth={1} borderColor={borderColor}>
+                <CardHeader>
                   <Heading size="md" color={currentTheme.colors.text.primary}>Temperatura Média</Heading>
                 </CardHeader>
                 <CardBody>
@@ -337,8 +324,8 @@ const WeatherMonitoring: React.FC = () => {
                 </CardBody>
               </Card>
 
-              <Card bg={bgCard} borderWidth={1} borderColor={borderColor}>
-                <CardHeader bg={currentTheme.colors.background.tertiary}>
+              <Card bg="white" borderWidth={1} borderColor={borderColor}>
+                <CardHeader>
                   <Heading size="md" color={currentTheme.colors.text.primary}>Precipitação Acumulada</Heading>
                 </CardHeader>
                 <CardBody>
@@ -348,8 +335,8 @@ const WeatherMonitoring: React.FC = () => {
                 </CardBody>
               </Card>
 
-              <Card bg={bgCard} borderWidth={1} borderColor={borderColor}>
-                <CardHeader bg={currentTheme.colors.background.tertiary}>
+              <Card bg="white" borderWidth={1} borderColor={borderColor}>
+                <CardHeader>
                   <Heading size="md" color={currentTheme.colors.text.primary}>Umidade do Solo</Heading>
                 </CardHeader>
                 <CardBody>
@@ -374,8 +361,8 @@ const WeatherMonitoring: React.FC = () => {
                 </CardBody>
               </Card>
 
-              <Card bg={bgCard} borderWidth={1} borderColor={borderColor}>
-                <CardHeader bg={currentTheme.colors.background.tertiary}>
+              <Card bg="white" borderWidth={1} borderColor={borderColor}>
+                <CardHeader>
                   <Heading size="md" color={currentTheme.colors.text.primary}>Índice de Estresse Hídrico</Heading>
                 </CardHeader>
                 <CardBody>
@@ -403,8 +390,8 @@ const WeatherMonitoring: React.FC = () => {
 
           {/* Sidebar */}
           <GridItem>
-            <Card bg={bgCard} borderWidth={1} borderColor={borderColor} position="sticky" top={4}>
-              <CardHeader bg={currentTheme.colors.background.tertiary}>
+            <Card bg="white" borderWidth={1} borderColor={borderColor} position="sticky" top={4}>
+              <CardHeader>
                 <Flex align="center">
                   <Heading size="md" color={currentTheme.colors.text.primary}>Alertas Climáticos</Heading>
                   <Spacer />
@@ -420,35 +407,56 @@ const WeatherMonitoring: React.FC = () => {
                 </Flex>
               </CardHeader>
               <CardBody>
-                <VStack spacing={4} align="stretch">
+                <VStack spacing={3} align="stretch">
                   {alerts.map((alert, index) => (
-                    <Box key={index}>
-                      <Card bg={currentTheme.colors.background.secondary} borderWidth={1} borderColor={borderColor}>
-                        <CardBody>
-                          <VStack align="stretch" spacing={2}>
-                            <Text fontWeight="bold" color={currentTheme.colors.text.primary}>{alert.title}</Text>
-                            <Text fontSize="sm" color={currentTheme.colors.text.secondary}>
-                              {alert.description}
+                    <Card 
+                      key={index}
+                      bg={currentTheme.colors.background.primary}
+                      borderWidth={1}
+                      borderColor={currentTheme.colors.border.primary}
+                      borderLeftWidth={3}
+                      borderLeftColor={
+                        alert.priority === 'Alta' ? currentTheme.colors.status.success :
+                        alert.priority === 'Média' ? currentTheme.colors.status.warning :
+                        currentTheme.colors.status.error
+                      }
+                      _hover={{ 
+                        boxShadow: 'sm',
+                        borderColor: currentTheme.colors.border.secondary
+                      }}
+                      transition="all 0.2s"
+                    >
+                      <CardBody py={3} px={4}>
+                        <VStack align="stretch" spacing={2}>
+                          <Text 
+                            fontWeight="600" 
+                            fontSize="sm"
+                            color={currentTheme.colors.text.primary}
+                          >
+                            {alert.title}
+                          </Text>
+                          <Text 
+                            fontSize="xs" 
+                            color={currentTheme.colors.text.secondary}
+                            lineHeight="1.5"
+                          >
+                            {alert.description}
+                          </Text>
+                          <Flex justify="space-between" align="center" pt={1}>
+                            <Badge
+                              bg={alert.priority === 'Alta' ? currentTheme.colors.status.success : alert.priority === 'Média' ? currentTheme.colors.status.warning : currentTheme.colors.status.error}
+                              color="white"
+                              size="sm"
+                            >
+                              {alert.priority}
+                            </Badge>
+                            <Text fontSize="xs" color={currentTheme.colors.text.tertiary}>
+                              {alert.time}
                             </Text>
-                            <Flex justify="space-between" align="center">
-                              <Badge
-                                bg={getPriorityColor(alert.priority)}
-                                color={currentTheme.colors.text.inverse}
-                                px={2}
-                                py={1}
-                                borderRadius="md"
-                              >
-                                {alert.priority}
-                              </Badge>
-                              <Text fontSize="xs" color={currentTheme.colors.text.secondary}>
-                                {alert.time}
-                              </Text>
-                            </Flex>
-                          </VStack>
-                        </CardBody>
-                      </Card>
-                      {index < alerts.length - 1 && <Divider />}
-                    </Box>
+                          </Flex>
+                        </VStack>
+                      </CardBody>
+                    </Card>
                   ))}
                 </VStack>
               </CardBody>

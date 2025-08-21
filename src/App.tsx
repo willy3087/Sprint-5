@@ -11,6 +11,8 @@ import Login from './pages/Login';
 import NotFound from './pages/NotFound';
 import CoffeeAnalysis from './pages/CoffeeAnalysis';
 import WeatherMonitoring from './pages/WeatherMonitoring';
+import ProducerSignup from './pages/ProducerSignup';
+import ProducerData from './pages/ProducerData';
 
 const isLoggedIn = () => {
   return localStorage.getItem('isLoggedIn') === 'true';
@@ -98,6 +100,22 @@ const AppRoutes: React.FC = () => {
           element={
             <RequireAuth>
               <WeatherMonitoring />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/producer-signup"
+          element={
+            <RequireAuth>
+              <ProducerSignup />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/producer-data"
+          element={
+            <RequireAuth>
+              <ProducerData />
             </RequireAuth>
           }
         />

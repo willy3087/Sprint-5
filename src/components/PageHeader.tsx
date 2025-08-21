@@ -13,6 +13,7 @@ import {
 } from '@chakra-ui/react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { Home } from 'react-feather';
+import { useThemeContext } from '../contexts/ThemeContext';
 
 interface PageHeaderProps {
   title: string;
@@ -26,6 +27,7 @@ interface PageHeaderProps {
 
 const PageHeader: React.FC<PageHeaderProps> = ({ title, subtitle, icon, breadcrumbs }) => {
   const location = useLocation();
+  const { currentTheme } = useThemeContext();
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
   const textColor = useColorModeValue('gray.600', 'gray.400');
@@ -70,7 +72,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, subtitle, icon, breadcru
           {/* Title and Subtitle */}
           <HStack spacing={4} align="start" mb={3}>
             <HStack spacing={3} align="center">
-              {icon && <Icon as={icon} boxSize={7} color="coffee.500" />}
+              {icon && <Icon as={icon} boxSize={7} color={currentTheme.colors.primary} />}
               <Box>
                 <Heading size="lg" color={useColorModeValue('gray.800', 'white')}>
                   {title}
@@ -98,7 +100,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, subtitle, icon, breadcru
                     to={crumb.href}
                     color={textColor}
                     textDecoration="underline"
-                    _hover={{ color: 'coffee.500' }}
+                    _hover={{ color: currentTheme.colors.primary }}
                     display="flex"
                     alignItems="center"
                     gap={1}
@@ -107,7 +109,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, subtitle, icon, breadcru
                     {crumb.label}
                   </BreadcrumbLink>
                 ) : (
-                  <Text color="coffee.600" fontWeight="medium" textDecoration="underline">
+                  <Text color={currentTheme.colors.primary} fontWeight="medium" textDecoration="underline">
                     {crumb.label}
                   </Text>
                 )}

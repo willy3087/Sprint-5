@@ -16,6 +16,7 @@ import {
 import coffeeFarmImage from '../../assets/coffee-farm-sunset.png';
 import coffeeFarmerImage from '../../assets/coffee-farmer-sunrise.png';
 import { Search, ChevronRight, Globe, Shield, Coffee } from 'react-feather';
+import { useThemeContext } from '../../contexts/ThemeContext';
 
 interface HeroSectionProps {
   searchQuery: string;
@@ -36,6 +37,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const heroImages = [coffeeFarmImage, coffeeFarmerImage];
   
+  // Usa o contexto de tema para obter currentTheme
+  const { currentTheme } = useThemeContext();
+
   // Alterna as imagens a cada 5 segundos
   useEffect(() => {
     const interval = setInterval(() => {
@@ -129,9 +133,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             <HStack spacing={4}>
               <Button
                 size="lg"
-                bg="coffee.500"
+                bg={`${currentTheme.colors.primary}`}
                 color="white"
-                _hover={{ bg: 'coffee.600', transform: 'translateY(-2px)', boxShadow: '2xl' }}
+                _hover={{ bg: currentTheme.colors.secondaryLight, transform: 'translateY(-2px)', boxShadow: '2xl' }}
                 rightIcon={<ChevronRight size={20} />}
                 onClick={() => navigate('/dashboard')}
                 px={8}

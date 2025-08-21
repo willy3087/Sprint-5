@@ -39,14 +39,28 @@ export interface GeneratedTheme {
     };
     status: {
       success: string;
+      successLight: string;
+      successBg: string;
       warning: string;
+      warningLight: string;
+      warningBg: string;
       error: string;
+      errorLight: string;
+      errorBg: string;
       info: string;
+      infoLight: string;
+      infoBg: string;
     };
     trading: {
       positive: string;
+      positiveLight: string;
+      positiveBg: string;
       negative: string;
+      negativeLight: string;
+      negativeBg: string;
       neutral: string;
+      neutralLight: string;
+      neutralBg: string;
     };
   };
 }
@@ -197,9 +211,9 @@ export function generateTheme(primaryColor: string, name: string = 'custom'): Ge
   
   // Gera cores de background baseadas na luminosidade
   const backgrounds = {
-    primary: '#FFFFFF',
-    secondary: '#F7FAFC',
-    tertiary: '#EDF2F7',
+    primary: '#ffffff',
+    secondary: '#eef3f7',
+    tertiary: '#eff3f9',
   };
   
   // Gera cores de texto baseadas no contraste
@@ -210,26 +224,62 @@ export function generateTheme(primaryColor: string, name: string = 'custom'): Ge
     inverse: isDark ? '#FFFFFF' : primaryColor,
   };
   
-  // Gera cores de borda
+  // Gera cores de borda - ajustadas para não ficarem muito claras
+  // Para cores escuras, usa menos clareza. Para cores claras, usa mais.
+  const primaryLuminance = getLuminance(primaryColor);
+  
+  // Para cores muito escuras como coffee, usa uma abordagem diferente
+  let borderPrimary, borderSecondary;
+  
+  if (primaryLuminance < 0.15) {
+    // Para cores muito escuras, cria bordas baseadas em cinza com um toque da cor primária
+    const { r, g, b } = hexToRgb(primaryColor);
+    borderPrimary = `rgb(${Math.min(255, r + 180)}, ${Math.min(255, g + 180)}, ${Math.min(255, b + 180)})`;
+    borderSecondary = `rgb(${Math.min(255, r + 140)}, ${Math.min(255, g + 140)}, ${Math.min(255, b + 140)})`;
+  } else if (primaryLuminance < 0.3) {
+    // Para cores escuras, clareia moderadamente
+    borderPrimary = lighten(primaryColor, 0.55);
+    borderSecondary = lighten(primaryColor, 0.45);
+  } else {
+    // Para cores claras, usa o comportamento padrão
+    borderPrimary = lighten(primaryColor, 0.85);
+    borderSecondary = lighten(primaryColor, 0.75);
+  }
+  
   const borderColors = {
-    primary: lighten(primaryColor, 0.85),
-    secondary: lighten(primaryColor, 0.75),
+    primary: borderPrimary,
+    secondary: borderSecondary,
     focus: primaryColor,
   };
   
-  // Cores de status com lógica baseada na cor principal
+  // Cores de status FIXAS - não mudam com o tema
+  // Estas são cores universais para indicadores semânticos
   const statusColors = {
-    success: rotateHue(primaryColor, 120), // Verde
-    warning: rotateHue(primaryColor, 60),  // Amarelo/Laranja
-    error: rotateHue(primaryColor, -120),  // Vermelho
-    info: rotateHue(primaryColor, -160),   // Azul
+    success: '#48BB78',      // Verde fixo para sucesso/aprovado
+    successLight: '#9AE6B4', // Verde claro
+    successBg: '#F0FFF4',    // Verde muito claro (background)
+    warning: '#ED8936',      // Laranja fixo para avisos
+    warningLight: '#FBD38D', // Laranja claro
+    warningBg: '#FFFDF7',    // Laranja muito claro (background)
+    error: '#F56565',        // Vermelho fixo para erros
+    errorLight: '#FEB2B2',   // Vermelho claro
+    errorBg: '#FFF5F5',      // Vermelho muito claro (background)
+    info: '#4299E1',         // Azul fixo para informações
+    infoLight: '#90CDF4',    // Azul claro
+    infoBg: '#ffffff',       // Azul muito claro (background)
   };
   
-  // Cores de trading derivadas
+  // Cores de trading FIXAS - padrão universal do mercado financeiro
   const tradingColors = {
-    positive: statusColors.success,
-    negative: statusColors.error,
-    neutral: '#718096',
+    positive: '#48BB78',      // Verde para alta/ganhos
+    positiveLight: '#9AE6B4', // Verde claro
+    positiveBg: '#F0FFF4',    // Verde muito claro (background)
+    negative: '#F56565',      // Vermelho para baixa/perdas
+    negativeLight: '#FEB2B2', // Vermelho claro
+    negativeBg: '#FFF5F5',    // Vermelho muito claro (background)
+    neutral: '#718096',       // Cinza para neutro/estável
+    neutralLight: '#919faf',  // Cinza claro
+    neutralBg: '#d0d9e0ed',     // Cinza muito claro (background)
   };
   
   return {
@@ -253,26 +303,30 @@ export function generateTheme(primaryColor: string, name: string = 'custom'): Ge
 
 // Temas predefinidos
 export const predefinedThemes = {
-  coffee: generateTheme('#8B4513', 'coffee'),
+  coffee: generateTheme('#753a0f', 'coffee'),
   burgundy: generateTheme('#800020', 'burgundy'),
-  ocean: generateTheme('#006994', 'ocean'),
-  forest: generateTheme('#228B22', 'forest'),
-  sunset: generateTheme('#FF6B35', 'sunset'),
+  ocean: generateTheme('#005e94c1', 'ocean'),
+  forest: generateTheme('#357035a1', 'forest'),
+  sunset: generateTheme('#cc4514', 'sunset'),
   midnight: generateTheme('#191970', 'midnight'),
-  gold: generateTheme('#FFD700', 'gold'),
-  purple: generateTheme('#6B46C1', 'purple'),
+  gold: generateTheme('#ffd9007b', 'gold'),
+  purple: generateTheme('#4d3e70', 'purple'),
 };
 
 // Função para aplicar tema ao Chakra UI
 export function applyThemeToChakra(theme: GeneratedTheme) {
+  // Ajusta os fatores de clareza baseado na luminosidade da cor primária
+  const primaryLuminance = getLuminance(theme.colors.primary);
+  const isVeryDark = primaryLuminance < 0.2;
+  
   return {
     colors: {
       brand: {
-        50: lighten(theme.colors.primary, 0.9),
-        100: lighten(theme.colors.primary, 0.7),
-        200: lighten(theme.colors.primary, 0.5),
-        300: lighten(theme.colors.primary, 0.3),
-        400: lighten(theme.colors.primary, 0.1),
+        50: lighten(theme.colors.primary, isVeryDark ? 0.75 : 0.9),
+        100: lighten(theme.colors.primary, isVeryDark ? 0.6 : 0.7),
+        200: lighten(theme.colors.primary, isVeryDark ? 0.45 : 0.5),
+        300: lighten(theme.colors.primary, isVeryDark ? 0.3 : 0.3),
+        400: lighten(theme.colors.primary, isVeryDark ? 0.15 : 0.1),
         500: theme.colors.primary,
         600: darken(theme.colors.primary, 0.1),
         700: darken(theme.colors.primary, 0.3),

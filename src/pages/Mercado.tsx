@@ -27,7 +27,6 @@ import {
   Flex,
   Spacer,
   Divider,
-  Image,
   Card,
   CardBody,
   CardHeader,
@@ -38,6 +37,7 @@ import {
 } from '@chakra-ui/react';
 import { RefreshCw, TrendingUp, TrendingDown, Activity, ShoppingCart, DollarSign } from 'react-feather';
 import { useThemeContext } from '../contexts/ThemeContext';
+import ImageWithFallback from '../components/common/ImageWithFallback';
 import { Line, Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -182,7 +182,6 @@ const Mercado: React.FC = () => {
     },
   ]);
 
-  const bgCard = currentTheme.colors.background.primary;
   const borderColor = currentTheme.colors.border.primary;
   
   // Functions for realistic price movements
@@ -377,18 +376,6 @@ const Mercado: React.FC = () => {
     },
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'Alta':
-        return currentTheme.colors.status.error;
-      case 'Média':
-        return currentTheme.colors.status.warning;
-      case 'Baixa':
-        return currentTheme.colors.status.success;
-      default:
-        return currentTheme.colors.text.secondary;
-    }
-  };
 
   const getImpactIcon = (impact: string) => {
     switch (impact) {
@@ -490,7 +477,7 @@ const Mercado: React.FC = () => {
             <GridItem>
               {/* Cards de Informações do Mercado */}
               <Grid templateColumns={{ base: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(5, 1fr)' }} gap={4} mb={6}>
-                <Card bg={bgCard} borderWidth={1} borderColor={borderColor}>
+                <Card bg="white" borderWidth={1} borderColor={borderColor}>
                   <CardBody p={4}>
                     <Stat textAlign="center">
                       <StatLabel fontSize="xs" color={currentTheme.colors.text.secondary}>Último Preço</StatLabel>
@@ -503,7 +490,7 @@ const Mercado: React.FC = () => {
                   </CardBody>
                 </Card>
 
-                <Card bg={bgCard} borderWidth={1} borderColor={borderColor} borderLeftWidth={4} borderLeftColor={marketData.variacao >= 0 ? currentTheme.colors.trading.positive : currentTheme.colors.trading.negative}>
+                <Card bg="white" borderWidth={1} borderColor={borderColor} borderLeftWidth={4} borderLeftColor={marketData.variacao >= 0 ? currentTheme.colors.trading.positive : currentTheme.colors.trading.negative}>
                   <CardBody p={4}>
                     <Stat textAlign="center">
                       <StatLabel fontSize="xs" color={currentTheme.colors.text.secondary}>Variação (R$)</StatLabel>
@@ -517,7 +504,7 @@ const Mercado: React.FC = () => {
                   </CardBody>
                 </Card>
 
-                <Card bg={bgCard} borderWidth={1} borderColor={borderColor}>
+                <Card bg="white" borderWidth={1} borderColor={borderColor}>
                   <CardBody p={4}>
                     <Stat textAlign="center">
                       <StatLabel fontSize="xs" color={currentTheme.colors.text.secondary}>Máxima (24h)</StatLabel>
@@ -527,7 +514,7 @@ const Mercado: React.FC = () => {
                   </CardBody>
                 </Card>
 
-                <Card bg={bgCard} borderWidth={1} borderColor={borderColor}>
+                <Card bg="white" borderWidth={1} borderColor={borderColor}>
                   <CardBody p={4}>
                     <Stat textAlign="center">
                       <StatLabel fontSize="xs" color={currentTheme.colors.text.secondary}>Mínima (24h)</StatLabel>
@@ -537,7 +524,7 @@ const Mercado: React.FC = () => {
                   </CardBody>
                 </Card>
 
-                <Card bg={bgCard} borderWidth={1} borderColor={borderColor}>
+                <Card bg="white" borderWidth={1} borderColor={borderColor}>
                   <CardBody p={4}>
                     <Stat textAlign="center">
                       <StatLabel fontSize="xs" color={currentTheme.colors.text.secondary}>Volume Total</StatLabel>
@@ -549,7 +536,7 @@ const Mercado: React.FC = () => {
               </Grid>
 
               {/* Trading Section */}
-              <Card bg={bgCard} borderWidth={1} borderColor={borderColor} mb={6}>
+              <Card bg="white" borderWidth={1} borderColor={borderColor} mb={6}>
                 <CardHeader>
                   <Flex align="center">
                     <Heading size="md" color={currentTheme.colors.text.primary}>Painel Interativo de Trading - Café Arábica</Heading>
@@ -651,7 +638,7 @@ const Mercado: React.FC = () => {
               </Card>
 
               {/* Enhanced Price Table */}
-              <Card bg={bgCard} borderWidth={1} borderColor={borderColor}>
+              <Card bg="white" borderWidth={1} borderColor={borderColor}>
                 <CardHeader>
                   <Heading size="md" color={currentTheme.colors.text.primary}>Preços do Mercado de Café</Heading>
                   <Text fontSize="sm" color={currentTheme.colors.text.secondary}>Atualização em tempo real - Diferentes tipos e contratos</Text>
@@ -712,7 +699,7 @@ const Mercado: React.FC = () => {
 
             {/* Sidebar de Notícias */}
             <GridItem>
-              <Card bg={bgCard} borderWidth={1} borderColor={borderColor} position="sticky" top={4}>
+              <Card bg="white" borderWidth={1} borderColor={borderColor} position="sticky" top={4}>
                 <CardHeader>
                   <Flex align="center">
                     <Heading size="md" color={currentTheme.colors.text.primary}>Notícias do Mercado</Heading>
@@ -736,10 +723,15 @@ const Mercado: React.FC = () => {
                   ) : (
                     <VStack spacing={4} align="stretch">
                       {newsItems.map((news) => (
-                        <Box key={news.id}>
+                        <Box 
+                          key={news.id}
+                          cursor="pointer"
+                          transition="all 0.3s"
+                          _hover={{ transform: 'translateX(4px)', opacity: 0.9 }}
+                        >
                           <Flex gap={3}>
                             {news.imagem && (
-                              <Image
+                              <ImageWithFallback
                                 src={news.imagem}
                                 alt={news.titulo}
                                 boxSize="80px"
@@ -759,16 +751,19 @@ const Mercado: React.FC = () => {
                               </Text>
                               <Flex justify="space-between" align="center">
                                 <HStack spacing={2}>
-                                  <Badge bg={getPriorityColor(news.prioridade)} color={currentTheme.colors.text.inverse} size="sm">
+                                  <Badge
+                                    bg={news.prioridade === 'Alta' ? currentTheme.colors.status.success : news.prioridade === 'Média' ? currentTheme.colors.status.warning : currentTheme.colors.status.error}
+                                    color="white"
+                                  >
                                     {news.prioridade}
                                   </Badge>
                                   {news.relevancia && (
                                     <Badge
-                                      bg={news.relevancia >= 70 ? currentTheme.colors.status.success : news.relevancia >= 40 ? currentTheme.colors.status.warning : currentTheme.colors.status.error}
-                                      color={currentTheme.colors.text.inverse}
-                                      size="xs"
+                                      bg={news.relevancia && news.relevancia > 80 ? currentTheme.colors.status.success : currentTheme.colors.status.warning}
+                                      color="white"
+                                      size="sm"
                                     >
-                                      {news.relevancia}% relevante
+                                      {news.relevancia}%
                                     </Badge>
                                   )}
                                 </HStack>

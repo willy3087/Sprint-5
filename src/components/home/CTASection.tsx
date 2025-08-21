@@ -8,6 +8,7 @@ import {
   Text,
   Button,
 } from '@chakra-ui/react';
+import BackgroundImageWithFallback from '../common/BackgroundImageWithFallback';
 
 const CTASection: React.FC = () => {
   return (
@@ -19,16 +20,15 @@ const CTASection: React.FC = () => {
       position="relative"
       overflow="hidden"
     >
-      <Box
+      <BackgroundImageWithFallback
         position="absolute"
         top="0"
         left="0"
         right="0"
         bottom="0"
         opacity="0.1"
-        backgroundImage="url('https://images.unsplash.com/photo-1559056199-641a0a45b0d3?q=80&w=2940')"
-        backgroundSize="cover"
-        backgroundPosition="center"
+        imageUrl="https://images.unsplash.com/photo-1559056199-641a0a45b0d3?q=80&w=2940"
+        fallbackColor="coffee.800"
       />
       <Container maxW="container.lg" position="relative" zIndex="1">
         <VStack spacing={8} textAlign="center">
